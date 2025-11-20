@@ -1,0 +1,96 @@
+{
+  "name": "yesplaymusic",
+  "version": "0.0.1",
+  "private": true,
+  "description": "A third party music player for Netease Music",
+  "author": "qier222<qier222@outlook.com>",
+  "scripts": {
+    "build": "set NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service build",
+    "serve": "vue-cli-service serve",
+    "lint": "vue-cli-service lint",
+    "prettier": "npx prettier --write ./src"
+  },
+  "main": "src/main.js",
+  "engines": {
+    "node": "14 || 16"
+  },
+  "dependencies": {
+    "axios": "^0.26.1",
+    "change-case": "^4.1.2",
+    "color": "^4.2.3",
+    "core-js": "^3.6.5",
+    "crypto-js": "^4.0.0",
+    "dayjs": "^1.8.36",
+    "dexie": "^3.0.3",
+    "howler": "^2.2.3",
+    "js-cookie": "^2.2.1",
+    "jsbi": "^4.1.0",
+    "lodash": "^4.17.20",
+    "md5": "^2.3.0",
+    "music-metadata": "^7.5.3",
+    "node-vibrant": "^3.2.1-alpha.1",
+    "nprogress": "^0.2.0",
+    "plyr": "^3.6.2",
+    "qrcode": "^1.4.4",
+    "register-service-worker": "^1.7.1",
+    "svg-sprite-loader": "^6.0.11",
+    "vscode-codicons": "^0.0.17",
+    "vue": "^2.6.11",
+    "vue-clipboard2": "^0.3.1",
+    "vue-gtag": "1",
+    "vue-i18n": "^8.22.0",
+    "vue-router": "^3.4.3",
+    "vue-slider-component": "^3.2.5",
+    "vuex": "^3.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.0",
+    "@vue/cli-plugin-babel": "~4.5.0",
+    "@vue/cli-plugin-eslint": "~4.5.0",
+    "@vue/cli-plugin-pwa": "~4.5.0",
+    "@vue/cli-plugin-vuex": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "babel-eslint": "^10.1.0",
+    "esbuild": "^0.27.0",
+    "esbuild-loader": "^4.4.0",
+    "eslint": "^6.7.2",
+    "eslint-config-prettier": "^6.15.0",
+    "eslint-plugin-prettier": "^3.3.1",
+    "eslint-plugin-vue": "^7.9.0",
+    "husky": "^4.3.0",
+    "prettier": "2.5.1",
+    "sass": "^1.26.11",
+    "sass-loader": "^10.0.2",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true,
+      "browser": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "plugin:vue/recommended",
+      "plugin:prettier/recommended",
+      "eslint:recommended"
+    ],
+    "parserOptions": {
+      "parser": "babel-eslint"
+    },
+    "globals": {
+      "ipcRenderer": "off"
+    },
+    "rules": {}
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run prettier"
+    }
+  }
+}
