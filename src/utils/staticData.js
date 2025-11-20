@@ -3,7 +3,7 @@ export const byAppleMusic = [
     coverImgUrl: require('@/assets/images/hajimi.png'),
     name: 'Hot Cats',
     id: 5278068783,
-    playCount:100,
+    playCount: 100,
   },
   {
     coverImgUrl: require('@/assets/images/hajimi.png'),

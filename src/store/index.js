@@ -45,6 +45,4 @@ window
     }
   });
 
-
-
 export default store;

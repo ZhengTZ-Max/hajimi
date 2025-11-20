@@ -116,7 +116,6 @@ export default {
   methods: {
     ...mapMutations(['togglePlaylistCategory']),
     loadData() {
-      
       const queryCategory = this.$route.query.category;
       if (queryCategory === undefined) {
         this.playlists = [];

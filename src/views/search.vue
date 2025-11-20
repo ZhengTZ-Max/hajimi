@@ -61,11 +61,9 @@ export default {
         const name = (item.name || '').toLowerCase();
         // const author = (item.author || '').toLowerCase();
         // const desc = (item.description || '').toLowerCase();
-        return (
-          name.includes(kw) 
-          // author.includes(kw) ||
-          // desc.includes(kw)
-        );
+        return name.includes(kw);
+        // author.includes(kw) ||
+        // desc.includes(kw)
       });
     },
   },

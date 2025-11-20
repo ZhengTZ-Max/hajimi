@@ -351,7 +351,7 @@ nav.has-custom-titlebar {
 }
 
 @media (max-width: 768px) {
-  .navigation-buttons{
+  .navigation-buttons {
     display: none;
   }
   .right-part {

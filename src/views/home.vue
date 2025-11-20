@@ -2,11 +2,7 @@
   <div class="home">
     <div class="index-row first-row">
       <div class="title"> 热门 </div>
-      <CoverRow
-        :type="'playlist'"
-        :items="HotList"
-        :use-external-url="true"
-      />
+      <CoverRow :type="'playlist'" :items="HotList" :use-external-url="true" />
     </div>
   </div>
 </template>
