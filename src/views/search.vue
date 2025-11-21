@@ -18,6 +18,13 @@
         :use-external-url="true"
       />
     </div>
+    <div
+      v-if="keywords && playlists.length === 0"
+      class="empty-result"
+    >
+      <p class="empty-text">未搜索到相关内容</p>
+      <button class="back-home" @click="goHome">返回首页</button>
+    </div>
   </div>
 </template>
 
@@ -58,13 +65,16 @@ export default {
       }
 
       this.playlists = HotList.filter(item => {
-        const name = (item.name || '').toLowerCase();
+        const name = (item.title || '').toLowerCase();
         // const author = (item.author || '').toLowerCase();
         // const desc = (item.description || '').toLowerCase();
         return name.includes(kw);
         // author.includes(kw) ||
         // desc.includes(kw)
       });
+    },
+    goHome() {
+      this.$router.push({ name: 'home' });
     },
   },
 };
@@ -89,5 +99,27 @@ export default {
 }
 .playlists {
   margin-top: 46px;
+}
+.empty-result {
+  margin-top: 80px;
+  text-align: center;
+  color: var(--color-text);
+}
+
+.empty-text {
+  font-size: 18px;
+  font-weight: 600;
+  opacity: 0.8;
+  margin-bottom: 16px;
+}
+
+.back-home {
+  padding: 8px 20px;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
 }
 </style>

@@ -11,6 +11,15 @@
         <router-view v-if="$route.meta.keepAlive"></router-view>
       </keep-alive>
       <router-view v-if="!$route.meta.keepAlive"></router-view>
+      <div class="footer">
+        <p class="author"
+          >MADE BY
+          <a href="https://t.me/hajimi_bnb" target="_blank"
+            >哈基米官方频道</a
+          ></p
+        >
+        <p class="version">v0.0.1</p>
+      </div>
     </main>
     <transition name="slide-up">
       <Player v-if="enablePlayer" v-show="showPlayer" ref="player" />
@@ -141,5 +150,19 @@ main::-webkit-scrollbar {
 .slide-up-enter,
 .slide-up-leave-to {
   transform: translateY(100%);
+}
+.footer {
+  text-align: center;
+  margin-top: 6rem;
+  color: var(--color-text);
+  font-weight: 600;
+  .author {
+    font-size: 0.9rem;
+  }
+  .version {
+    font-size: 0.88rem;
+    opacity: 0.58;
+    margin-top: -10px;
+  }
 }
 </style>

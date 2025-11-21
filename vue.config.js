@@ -20,6 +20,14 @@ module.exports = {
           '^/api': '/',
         },
       },
+      '^/bapi': {
+        target: 'https://api.bilibili.com',
+        changeOrigin: true,
+        secure: false,
+        pathRewrite: {
+          '^/bapi': '/x/web-interface',
+        },
+      },
     },
   },
   pwa: {

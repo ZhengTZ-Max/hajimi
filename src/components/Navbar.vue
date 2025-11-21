@@ -41,7 +41,7 @@
             </div>
           </div>
         </div>
-        <div @click="toSettings">
+        <div class="hoverBtn" @click="toOpen('https://x.com/hajimi_CTO_BNB')">
           <svg-icon
             style="
               color: var(--color-text);
@@ -49,10 +49,54 @@
               height: 24px;
               margin-left: 24px;
               cursor: pointer;
+              transition: 0.3s;
+            "
+            icon-class="tuite"
+          />
+        </div>
+        <div class="hoverBtn" @click="toOpen('http://t.me/hajimi_bnb')">
+          <svg-icon
+            style="
+              color: var(--color-text);
+              width: 24px;
+              height: 24px;
+              margin-left: 24px;
+              cursor: pointer;
+              transition: 0.3s;
+            "
+            icon-class="telegram"
+          />
+        </div>
+
+        <div class="hoverBtn" @click="toggleLang">
+          <svg-icon
+            style="
+              color: var(--color-text);
+              width: 24px;
+              height: 24px;
+              margin-left: 24px;
+              cursor: pointer;
+              transition: 0.3s;
+            "
+            :style="{
+              transform: currentLang == 'en' ? 'rotate(180deg)' : 'rotate(0)',
+            }"
+            icon-class="language"
+          />
+        </div>
+        <!-- <div class="hoverBtn" @click="togglePlayChoice">
+          <svg-icon
+            style="
+              color: var(--color-text);
+              width: 24px;
+              height: 24px;
+              margin-left: 24px;
+              cursor: pointer;
+              transition: 0.3s;
             "
             icon-class="settings"
           />
-        </div>
+        </div> -->
       </div>
     </nav>
   </div>
@@ -68,6 +112,7 @@ import 'vscode-codicons/dist/codicon.css';
 
 import ContextMenu from '@/components/ContextMenu.vue';
 import ButtonIcon from '@/components/ButtonIcon.vue';
+import { transform } from 'lodash';
 
 export default {
   name: 'Navbar',
@@ -78,7 +123,8 @@ export default {
   data() {
     return {
       inputFocus: false,
-      langs: ['zh-CN', 'zh-TW', 'en', 'tr'],
+      langs: ['zh-CN', 'en'],
+      currentLang: 'zh-CN',
       keywords: '',
     };
   },
@@ -121,11 +167,27 @@ export default {
       doLogout();
       this.$router.push({ name: 'home' });
     },
-    toSettings() {
-      this.$router.push({ name: 'settings' });
+    toggleLang() {
+      this.currentLang = this.currentLang == 'zh-CN' ? 'en' : 'zh-CN';
+
+      this.$i18n.locale = this.currentLang;
+      this.$store.commit('changeLang', this.currentLang);
+      if (this.currentLang == 'zh-CN') {
+        translate.changeLanguage('zh');
+      } else {
+        translate.changeLanguage('english');
+      }
     },
-    toGitHub() {
-      window.open('https://github.com/qier222/YesPlayMusic');
+    togglePlayChoice() {
+      const current = this.settings && this.settings.enableVideoPlayChoice;
+      this.$store.commit('updateSettings', {
+        key: 'enableVideoPlayChoice',
+        value: !current,
+      });
+      localStorage.setItem('settings', JSON.stringify(this.settings));
+    },
+    toOpen(url) {
+      window.open(url);
     },
     toLogin() {
       if (process.env.IS_ELECTRON === true) {

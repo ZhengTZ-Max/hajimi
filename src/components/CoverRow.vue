@@ -1,13 +1,13 @@
 <template>
   <div class="cover-row" :style="rowStyles">
     <div
-      v-for="item in items"
-      :key="item.id"
+      v-for="(item,i) in items"
+      :key="item.i"
       class="item"
       :class="{ artist: type === 'artist' }"
     >
       <Cover
-        :id="item.id"
+        :id="item.i"
         :image-url="getImageUrl(item)"
         :type="'open'"
         clickCoverToPlay
@@ -18,7 +18,7 @@
         <div v-if="showPlayCount && !useExternalUrl" class="info">
           <span class="play-count"
             ><svg-icon icon-class="play" />{{
-              item.playCount | formatPlayCount
+              (item.views || item.playCount) | formatPlayCount
             }}
           </span>
         </div>
@@ -28,43 +28,70 @@
             class="external-title"
             @click="openExternal(item)"
           >
-            {{ item.name }}
+            {{ getDisplayTitle(item) }}
           </span>
           <router-link v-else :to="getTitleLink(item)">{{
-            item.name
+            getDisplayTitle(item)
           }}</router-link>
         </div>
         <div v-if="useExternalUrl" class="info meta">
           <span v-if="item.author" class="author"
             ><b style="color: #f63c3c">{{ item.author }}</b></span
           >
-          <span v-if="item.author && item.creatTime" class="dot">·</span>
-          <span v-if="item.creatTime" class="time">{{ item.creatTime }}</span>
+          <span
+            v-if="item.author && (item.createTime || item.creatTime)"
+            class="dot"
+            >·</span
+          >
+          <span v-if="item.createTime || item.creatTime" class="time"
+            >{{ item.createTime || item.creatTime }}</span
+          >
         </div>
         <div v-if="useExternalUrl" class="info stats">
-          <span v-if="item.playCount" class="stat"
-            >播放 {{ item.playCount }}</span
-          >
-          <span v-if="item.like" class="stat">点赞 {{ item.like }}</span>
-          <span v-if="item.share" class="stat">分享 {{ item.share }}</span>
+          <div v-if="item.views || item.playCount" class="stat">
+            <svg-icon style="width: 12px;height: 12px;margin-right: 6px;" icon-class="play" />
+            <span>{{ (item.views || item.playCount) | formatPlayCount }}</span>
+          </div>
+          <div v-if="item.thumbupCount || item.like" class="stat">
+            <svg-icon style="width: 16px;height: 16px;margin-right: 6px;" icon-class="like" />
+            <span>{{ (item.thumbupCount || item.like) | formatPlayCount }}</span>
+          </div>
+          <div v-if="item.collectionCount" class="stat">
+            <svg-icon style="width: 16px;height: 16px;margin-right: 6px;" icon-class="mark" />
+            <span>{{ item.collectionCount | formatPlayCount }}</span>
+          </div>
+          <!-- <div v-if="item.commentCount" class="stat">
+            <svg-icon style="width: 12px;height: 12px;margin-right: 6px;" icon-class="mail" />
+            <span>评论 {{ item.commentCount | formatPlayCount }}</span>
+          </div> -->
+          <!-- <div v-if="item.shareCount || item.share" class="stat">
+            <svg-icon style="width: 12px;height: 12px;margin-right: 6px;" icon-class="more" />
+            <span>分享 {{ (item.shareCount || item.share) | formatPlayCount }}</span>
+          </div> -->
         </div>
         <div v-if="useExternalUrl" class="info">
           <span
-            v-html="item?.description"
+            v-html="getDisplayDescription(item)"
             style="color: var(--color-description)"
           ></span>
         </div>
       </div>
     </div>
+    <!-- 站内播放 iframe 大弹窗 -->
     <div
-      v-if="showExternalModal"
+      v-if="showExternalModal && !isMiniPlayer"
       class="external-modal-overlay"
       @click.self="closeExternal"
     >
       <div class="external-modal">
         <div class="external-modal-header">
           <div class="external-modal-title">{{ externalTitle }}</div>
-          <button class="external-modal-close" @click="closeExternal">×</button>
+          <div class="external-modal-actions">
+            <button class="external-modal-minimize" @click="minimizeExternal">
+              ┄
+            </button>
+            <button class="external-modal-close" @click="closeExternal">×</button>
+          </div>
         </div>
         <div class="external-modal-body">
           <iframe
@@ -77,12 +104,44 @@
         </div>
       </div>
     </div>
+
+    <!-- 站内播放 iframe 右下角小窗（240x240） -->
+    <div v-if="showExternalModal && isMiniPlayer" class="external-mini">
+      <div class="external-mini-header">
+        <div class="external-mini-title">{{ externalTitle }}</div>
+        <div class="external-mini-actions">
+          <button class="external-mini-button" @click="restoreFromMini">⤢</button>
+          <button class="external-mini-button" @click="closeExternal">×</button>
+        </div>
+      </div>
+      <div class="external-mini-body">
+        <iframe
+          v-if="externalUrl"
+          :src="externalUrl"
+          frameborder="0"
+          sandbox="allow-same-origin allow-scripts allow-popups"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+
+    <!-- 站内 / 站外 播放选择弹窗 -->
+    <div v-if="showPlayChoiceModal" class="play-choice-overlay" @click.self="showPlayChoiceModal = false">
+      <div class="play-choice-modal">
+        <div class="play-choice-title">选择播放方式</div>
+        <div class="play-choice-buttons">
+          <button class="play-choice-btn inside" @click="playInside">站内播放</button>
+          <button class="play-choice-btn outside" @click="playOutside">站外播放</button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 import Cover from '@/components/Cover.vue';
 import ExplicitSymbol from '@/components/ExplicitSymbol.vue';
+import { mapState } from 'vuex';
 
 export default {
   name: 'CoverRow',
@@ -106,9 +165,13 @@ export default {
       showExternalModal: false,
       externalUrl: '',
       externalTitle: '',
+      showPlayChoiceModal: false,
+      pendingItem: null,
+      isMiniPlayer: false,
     };
   },
   computed: {
+    ...mapState(['settings']),
     rowStyles() {
       return {
         gap: this.gap,
@@ -116,6 +179,16 @@ export default {
     },
   },
   methods: {
+    getDisplayTitle(item) {
+      const lang = this.settings && this.settings.lang;
+      if (lang === 'en' && item.title_en) return item.title_en;
+      return item.title || item.name;
+    },
+    getDisplayDescription(item) {
+      const lang = this.settings && this.settings.lang;
+      if (lang === 'en' && item.description_en) return item.description_en;
+      return item.description;
+    },
     getSubText(item) {
       if (this.subText === 'copywriter') return item.copywriter;
       if (this.subText === 'description') return item.description;
@@ -160,19 +233,52 @@ export default {
           return 'https://p2.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg?param=512y512';
         }
       }
-      let img = item.img1v1Url || item.picUrl || item.coverImgUrl;
+      let img = item.img1v1Url || item.picUrl || item.thumbnail || item.coverImgUrl;
       return img;
     },
     openExternal(item) {
       if (!this.useExternalUrl || !item.url) return;
+
+      const enableChoice =
+        this.settings && this.settings.enableVideoPlayChoice !== false;
+
+      this.pendingItem = item;
+
+      if (enableChoice) {
+        this.showPlayChoiceModal = true;
+      } else {
+        this.playInside();
+      }
+    },
+    playInside() {
+      const item = this.pendingItem;
+      if (!item || !item.url) return;
       this.externalUrl = item.url;
-      this.externalTitle = item.name || '';
+      this.externalTitle = this.getDisplayTitle(item);
+      this.showPlayChoiceModal = false;
       this.showExternalModal = true;
+      this.isMiniPlayer = false;
+    },
+    playOutside() {
+      const item = this.pendingItem;
+      if (!item || !item.url) return;
+      window.open(item.url, '_blank');
+      this.showPlayChoiceModal = false;
+    },
+    minimizeExternal() {
+      if (!this.showExternalModal) return;
+      this.isMiniPlayer = true;
+    },
+    restoreFromMini() {
+      if (!this.showExternalModal) return;
+      this.isMiniPlayer = false;
     },
     closeExternal() {
       this.showExternalModal = false;
       this.externalUrl = '';
       this.externalTitle = '';
+      this.isMiniPlayer = false;
+      this.pendingItem = null;
     },
   },
 };
@@ -234,6 +340,8 @@ export default {
       gap: 4px 12px;
       .stat {
         white-space: nowrap;
+        display: flex;
+        align-items: center;
       }
     }
   }
@@ -278,6 +386,21 @@ export default {
   white-space: nowrap;
 }
 
+.external-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.external-modal-minimize {
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-text);
+}
+
 .external-modal-close {
   background: transparent;
   border: none;
@@ -295,6 +418,112 @@ export default {
 .external-modal-body iframe {
   width: 100%;
   height: 100%;
+}
+
+.external-mini {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 240px;
+  height: 240px;
+  background: var(--color-body-bg);
+  border-radius: 12px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+  display: flex;
+  flex-direction: column;
+  z-index: 1000;
+}
+
+.external-mini-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-bottom: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.external-mini-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.external-mini-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.external-mini-button {
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--color-text);
+}
+
+.external-mini-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+.external-mini-body iframe {
+  width: 100%;
+  height: 100%;
+}
+
+.play-choice-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.play-choice-modal {
+  background: var(--color-body-bg);
+  border-radius: 12px;
+  padding: 20px 24px 18px;
+  min-width: 260px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+}
+
+.play-choice-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text);
+  margin-bottom: 14px;
+}
+
+.play-choice-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.play-choice-btn {
+  flex: 1;
+  padding: 8px 0;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.play-choice-btn.inside {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.play-choice-btn.outside {
+  background: var(--color-secondary-bg);
+  color: var(--color-text);
 }
 
 @media (max-width: 768px) {

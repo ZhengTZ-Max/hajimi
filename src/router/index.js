@@ -132,6 +132,11 @@ const routes = [
     name: 'lastfmCallback',
     component: () => import('@/views/lastfmCallback.vue'),
   },
+  {
+    path: '/bvid',
+    name: 'bvid',
+    component: () => import('@/views/getBilll.vue'),
+  },
 ];
 
 const router = new VueRouter({

@@ -27,6 +27,7 @@ let localStorage = {
     closeAppOption: 'ask',
     enableDiscordRichPresence: false,
     enableGlobalShortcut: true,
+    enableVideoPlayChoice: true,
     showLibraryDefault: false,
     subTitleDefault: false,
     linuxEnableCustomTitlebar: false,

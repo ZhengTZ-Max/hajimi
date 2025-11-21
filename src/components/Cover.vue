@@ -31,7 +31,6 @@
 <script>
 export default {
   props: {
-    id: { type: Number, required: true },
     type: { type: String, required: true },
     imageUrl: { type: String, required: true },
     fixedSize: { type: Number, default: 0 },
@@ -106,6 +105,7 @@ img {
   user-select: none;
   aspect-ratio: 1 / 1;
   border: 1px solid rgba(0, 0, 0, 0.04);
+  object-fit: cover;
 }
 
 .cover-hover {
