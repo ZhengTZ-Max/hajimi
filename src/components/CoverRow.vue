@@ -1,7 +1,7 @@
 <template>
   <div class="cover-row" :style="rowStyles">
     <div
-      v-for="(item,i) in items"
+      v-for="(item, i) in items"
       :key="item.i"
       class="item"
       :class="{ artist: type === 'artist' }"
@@ -43,21 +43,32 @@
             class="dot"
             >·</span
           >
-          <span v-if="item.createTime || item.creatTime" class="time"
-            >{{ item.createTime || item.creatTime }}</span
-          >
+          <span v-if="item.createTime || item.creatTime" class="time">{{
+            item.createTime || item.creatTime
+          }}</span>
         </div>
         <div v-if="useExternalUrl" class="info stats">
           <div v-if="item.views || item.playCount" class="stat">
-            <svg-icon style="width: 12px;height: 12px;margin-right: 6px;" icon-class="play" />
+            <svg-icon
+              style="width: 12px; height: 12px; margin-right: 6px"
+              icon-class="play"
+            />
             <span>{{ (item.views || item.playCount) | formatPlayCount }}</span>
           </div>
           <div v-if="item.thumbupCount || item.like" class="stat">
-            <svg-icon style="width: 16px;height: 16px;margin-right: 6px;" icon-class="like" />
-            <span>{{ (item.thumbupCount || item.like) | formatPlayCount }}</span>
+            <svg-icon
+              style="width: 16px; height: 16px; margin-right: 6px"
+              icon-class="like"
+            />
+            <span>{{
+              (item.thumbupCount || item.like) | formatPlayCount
+            }}</span>
           </div>
           <div v-if="item.collectionCount" class="stat">
-            <svg-icon style="width: 16px;height: 16px;margin-right: 6px;" icon-class="mark" />
+            <svg-icon
+              style="width: 16px; height: 16px; margin-right: 6px"
+              icon-class="mark"
+            />
             <span>{{ item.collectionCount | formatPlayCount }}</span>
           </div>
           <!-- <div v-if="item.commentCount" class="stat">
@@ -90,7 +101,9 @@
             <button class="external-modal-minimize" @click="minimizeExternal">
               ┄
             </button>
-            <button class="external-modal-close" @click="closeExternal">×</button>
+            <button class="external-modal-close" @click="closeExternal"
+              >×</button
+            >
           </div>
         </div>
         <div class="external-modal-body">
@@ -110,7 +123,9 @@
       <div class="external-mini-header">
         <div class="external-mini-title">{{ externalTitle }}</div>
         <div class="external-mini-actions">
-          <button class="external-mini-button" @click="restoreFromMini">⤢</button>
+          <button class="external-mini-button" @click="restoreFromMini"
+            >⤢</button
+          >
           <button class="external-mini-button" @click="closeExternal">×</button>
         </div>
       </div>
@@ -126,12 +141,20 @@
     </div>
 
     <!-- 站内 / 站外 播放选择弹窗 -->
-    <div v-if="showPlayChoiceModal" class="play-choice-overlay" @click.self="showPlayChoiceModal = false">
+    <div
+      v-if="showPlayChoiceModal"
+      class="play-choice-overlay"
+      @click.self="showPlayChoiceModal = false"
+    >
       <div class="play-choice-modal">
         <div class="play-choice-title">选择播放方式</div>
         <div class="play-choice-buttons">
-          <button class="play-choice-btn inside" @click="playInside">站内播放</button>
-          <button class="play-choice-btn outside" @click="playOutside">站外播放</button>
+          <button class="play-choice-btn inside" @click="playInside"
+            >站内播放</button
+          >
+          <button class="play-choice-btn outside" @click="playOutside"
+            >站外播放</button
+          >
         </div>
       </div>
     </div>
@@ -233,7 +256,8 @@ export default {
           return 'https://p2.music.126.net/VnZiScyynLG7atLIZ2YPkw==/18686200114669622.jpg?param=512y512';
         }
       }
-      let img = item.img1v1Url || item.picUrl || item.thumbnail || item.coverImgUrl;
+      let img =
+        item.img1v1Url || item.picUrl || item.thumbnail || item.coverImgUrl;
       return img;
     },
     openExternal(item) {

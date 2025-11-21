@@ -86,12 +86,11 @@ html {
   overscroll-behavior: none;
 }
 
-.hoverBtn{
-  transition: .3s;
+.hoverBtn {
+  transition: 0.3s;
 }
 
-
-.hoverBtn:hover{
+.hoverBtn:hover {
   transform: scale(1.15);
 }
 

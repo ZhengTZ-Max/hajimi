@@ -18,10 +18,7 @@
         :use-external-url="true"
       />
     </div>
-    <div
-      v-if="keywords && playlists.length === 0"
-      class="empty-result"
-    >
+    <div v-if="keywords && playlists.length === 0" class="empty-result">
       <p class="empty-text">未搜索到相关内容</p>
       <button class="back-home" @click="goHome">返回首页</button>
     </div>

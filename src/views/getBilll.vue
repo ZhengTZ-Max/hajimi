@@ -21,7 +21,7 @@
       <pre>{{ formattedResult }}</pre>
     </div>
 
-    <hr style="margin: 24px 0;" />
+    <hr style="margin: 24px 0" />
 
     <div class="bvid-form">
       <button
@@ -280,4 +280,3 @@ export default {
   word-break: break-all;
 }
 </style>
-
