@@ -30,12 +30,9 @@
               @click="playMockTrack(index)"
             >
               <div class="cover">
-                <div
-                  v-if="!imageLoaded[index]"
-                  class="cover-skeleton"
-                >
-                <img src="@/assets/images/hajimi.png" alt="" >
-              </div>
+                <div v-if="!imageLoaded[index]" class="cover-skeleton">
+                  <img src="@/assets/images/hajimi.png" alt="" />
+                </div>
                 <img
                   :src="track.cover_url || fallbackCover"
                   loading="lazy"
@@ -294,7 +291,12 @@ export default {
         height: 64px;
         border-radius: 8px;
         margin-right: 14px;
-        background: linear-gradient(90deg, #e5e7eb 0%, #f3f4f6 40%, #e5e7eb 80%);
+        background: linear-gradient(
+          90deg,
+          #e5e7eb 0%,
+          #f3f4f6 40%,
+          #e5e7eb 80%
+        );
         background-size: 200% 100%;
         animation: skeleton-loading 1.2s ease-in-out infinite;
       }
