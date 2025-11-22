@@ -16,7 +16,17 @@
           ><svg-icon icon-class="play" />
         </button>
       </div>
-      <img :src="imageUrl" :style="imageStyles" loading="lazy" />
+      <div class="img-wrapper">
+        <div v-if="!imageLoaded" class="cover-skeleton">
+          <img src="@/assets/images/hajimi.png" alt="" />
+        </div>
+        <img
+          :src="imageUrl"
+          :style="imageStyles"
+          loading="lazy"
+          @load="onImageLoad"
+        />
+      </div>
       <transition v-if="coverHover || alwaysShowShadow" name="fade">
         <div
           v-show="focus || alwaysShowShadow"
@@ -45,6 +55,7 @@ export default {
   data() {
     return {
       focus: false,
+      imageLoaded: false,
     };
   },
   computed: {
@@ -71,6 +82,9 @@ export default {
     },
   },
   methods: {
+    onImageLoad() {
+      this.imageLoaded = true;
+    },
     play() {
       if (this.type == 'open') {
         this.$emit('onTo', '');
@@ -99,12 +113,29 @@ export default {
 .cover-container {
   position: relative;
 }
+.img-wrapper {
+  position: relative;
+}
 img {
   border-radius: 0.75em;
   width: 100%;
   user-select: none;
   aspect-ratio: 1 / 1;
   border: 1px solid rgba(0, 0, 0, 0.04);
+  object-fit: cover;
+}
+.cover-skeleton {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75em;
+  overflow: hidden;
+}
+.cover-skeleton img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 

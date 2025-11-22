@@ -5,27 +5,42 @@
         <div class="toolbar">
           <!-- <div class="title">曼波~</div> -->
           <div class="view-switch">
-            <div class="button hoverBtn" :class="{ active: viewMode == 'grid' }" @click="viewMode = 'grid'"
+            <div
+              class="button hoverBtn"
+              :class="{ active: viewMode == 'grid' }"
+              @click="viewMode = 'grid'"
               >视图</div
             >
-            <div class="button hoverBtn" :class="{ active: viewMode == 'list' }"  @click="viewMode = 'list'"
+            <div
+              class="button hoverBtn"
+              :class="{ active: viewMode == 'list' }"
+              @click="viewMode = 'list'"
               >列表</div
             >
-
           </div>
         </div>
 
         <div v-if="viewMode === 'grid'" class="grid-mode">
           <div class="grid-wrapper" :style="gridStyle">
             <div
-              v-for="(track, index) in mockTracks"
+              v-for="(track, index) in visibleTracks"
               :key="track.id"
               class="grid-item"
               :class="{ active: index === activeIndex }"
               @click="playMockTrack(index)"
             >
               <div class="cover">
-                <img :src="track.cover_url || fallbackCover" loading="lazy" />
+                <div
+                  v-if="!imageLoaded[index]"
+                  class="cover-skeleton"
+                >
+                <img src="@/assets/images/hajimi.png" alt="" >
+              </div>
+                <img
+                  :src="track.cover_url || fallbackCover"
+                  loading="lazy"
+                  @load="onImageLoad(index)"
+                />
               </div>
               <div class="info">
                 <div class="title" :title="track.title">{{ track.title }}</div>
@@ -39,7 +54,7 @@
 
         <div v-else class="list-mode">
           <div
-            v-for="(track, index) in mockTracks"
+            v-for="(track, index) in visibleTracks"
             :key="track.id"
             class="list-row"
             :class="{ active: index === activeIndex }"
@@ -78,14 +93,28 @@ export default {
       fallbackCover:
         'https://p2.music.126.net/UeTuwE7pvjBpypWLudqukA==/3132508627578625.jpg',
       mockTracks: MusicJson,
+      pageSize: 40,
+      visibleCount: 40,
+      imageLoaded: {},
+      scrollEl: null,
     };
   },
   mounted() {
     this.updateGridColumns();
     window.addEventListener('resize', this.updateGridColumns);
+    this.initVisibleCount();
+    this.scrollEl = this.$el && this.$el.parentNode;
+    if (this.scrollEl) {
+      this.scrollEl.addEventListener('scroll', this.handleScroll, {
+        passive: true,
+      });
+    }
   },
   beforeDestroy() {
     window.removeEventListener('resize', this.updateGridColumns);
+    if (this.scrollEl) {
+      this.scrollEl.removeEventListener('scroll', this.handleScroll);
+    }
   },
   computed: {
     gridStyle() {
@@ -94,6 +123,9 @@ export default {
       };
     },
     ...mapState(['playerBar']),
+    visibleTracks() {
+      return this.mockTracks.slice(0, this.visibleCount);
+    },
   },
   watch: {
     playerBar: {
@@ -107,6 +139,21 @@ export default {
     },
   },
   methods: {
+    initVisibleCount() {
+      const length = this.mockTracks.length;
+      this.visibleCount = Math.min(this.pageSize, length);
+    },
+    handleScroll() {
+      if (!this.scrollEl) return;
+
+      const scrollBottom = this.scrollEl.scrollTop + this.scrollEl.clientHeight;
+      const threshold = this.scrollEl.scrollHeight - 300;
+      if (scrollBottom < threshold) return;
+
+      const length = this.mockTracks.length;
+      if (this.visibleCount >= length) return;
+      this.visibleCount = Math.min(this.visibleCount + this.pageSize, length);
+    },
     updateGridColumns() {
       const width = window.innerWidth;
       if (width <= 640) {
@@ -122,6 +169,9 @@ export default {
       const minutes = Math.floor(totalSeconds / 60);
       const seconds = totalSeconds % 60;
       return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+    },
+    onImageLoad(index) {
+      this.$set(this.imageLoaded, index, true);
     },
     playMockTrack(index) {
       this.activeIndex = index;
@@ -233,6 +283,21 @@ export default {
         border-radius: 8px;
         margin-right: 14px;
       }
+      .cover {
+        position: relative;
+      }
+      .cover-skeleton {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        margin-right: 14px;
+        background: linear-gradient(90deg, #e5e7eb 0%, #f3f4f6 40%, #e5e7eb 80%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.2s ease-in-out infinite;
+      }
       .info {
         display: flex;
         flex-direction: column;
@@ -334,6 +399,15 @@ export default {
         }
       }
     }
+  }
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
   }
 }
 </style>

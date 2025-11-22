@@ -13,7 +13,11 @@
           >Tiktok</div
         >
       </div>
-      <CoverRow :type="'playlist'" :items="HotList" :use-external-url="true" />
+      <CoverRow
+        :type="'playlist'"
+        :items="visibleHotList"
+        :use-external-url="true"
+      />
     </div>
   </div>
 </template>
@@ -31,7 +35,46 @@ export default {
     return {
       HotList,
       active: '0',
+      pageSize: 12,
+      visibleCount: 12,
+      scrollEl: null,
     };
+  },
+  computed: {
+    visibleHotList() {
+      return this.HotList.slice(0, this.visibleCount);
+    },
+  },
+  mounted() {
+    this.initVisibleCount();
+    this.scrollEl = this.$el && this.$el.parentNode;
+    if (this.scrollEl) {
+      this.scrollEl.addEventListener('scroll', this.handleScroll, {
+        passive: true,
+      });
+    }
+  },
+  beforeDestroy() {
+    if (this.scrollEl) {
+      this.scrollEl.removeEventListener('scroll', this.handleScroll);
+    }
+  },
+  methods: {
+    initVisibleCount() {
+      const length = this.HotList.length;
+      this.visibleCount = Math.min(this.pageSize, length);
+    },
+    handleScroll() {
+      if (!this.scrollEl) return;
+
+      const scrollBottom = this.scrollEl.scrollTop + this.scrollEl.clientHeight;
+      const threshold = this.scrollEl.scrollHeight - 100;
+      if (scrollBottom < threshold) return;
+
+      const length = this.HotList.length;
+      if (this.visibleCount >= length) return;
+      this.visibleCount = Math.min(this.visibleCount + this.pageSize, length);
+    },
   },
 };
 </script>
