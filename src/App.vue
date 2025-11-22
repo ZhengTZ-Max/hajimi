@@ -18,7 +18,7 @@
             >哈基米官方频道</a
           ></p
         >
-        <p class="version">v0.0.1</p>
+        <p class="version">v0.0.2</p>
       </div>
     </main>
     <transition name="slide-up">

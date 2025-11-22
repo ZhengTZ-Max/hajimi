@@ -30,20 +30,20 @@ module.exports = {
       },
     },
   },
-  pwa: {
-    name: '哈基米',
-    iconPaths: {
-      favicon32: 'ha.png',
-      favicon16: 'ha.png',
-    },
-    themeColor: '#ffffff00',
-    manifestOptions: {
-      background_color: '#335eea',
-    },
-    // workboxOptions: {
-    //   swSrc: "dev/sw.js",
-    // },
-  },
+  // pwa: {
+  //   name: '哈基米',
+  //   iconPaths: {
+  //     favicon32: 'ha.png',
+  //     favicon16: 'ha.png',
+  //   },
+  //   themeColor: '#ffffff00',
+  //   manifestOptions: {
+  //     background_color: '#335eea',
+  //   },
+  //   // workboxOptions: {
+  //   //   swSrc: "dev/sw.js",
+  //   // },
+  // },
   pages: {
     index: {
       entry: 'src/main.js',
