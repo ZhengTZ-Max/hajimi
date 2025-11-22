@@ -6,7 +6,7 @@ export default {
   nav: {
     home: '哈基米',
     explore: '基米之家',
-    library: '基米之家（视频库）',
+    library: '曼波之音',
     search: '搜索',
     github: 'GitHub 仓库',
   },

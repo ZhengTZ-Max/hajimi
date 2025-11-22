@@ -1,416 +1,139 @@
 <template>
-  <div v-show="show" ref="library">
-    <h1>
-      <img
-        class="avatar"
-        :src="data.user.avatarUrl | resizeImage"
-        loading="lazy"
-      />{{ data.user.nickname }}{{ $t('library.sLibrary') }}
-    </h1>
+  <div v-show="show" ref="library" class="library">
     <div class="section-one">
-      <div class="liked-songs" @click="goToLikedSongsList">
-        <div class="top">
-          <p>
-            <span
-              v-for="(line, index) in pickedLyric"
-              v-show="line !== ''"
-              :key="`${line}${index}`"
-              >{{ line }}<br
-            /></span>
-          </p>
+      <div class="songs">
+        <div class="toolbar">
+          <!-- <div class="title">曼波~</div> -->
+          <div class="view-switch">
+            <div class="button hoverBtn" :class="{ active: viewMode == 'grid' }" @click="viewMode = 'grid'"
+              >视图</div
+            >
+            <div class="button hoverBtn" :class="{ active: viewMode == 'list' }"  @click="viewMode = 'list'"
+              >列表</div
+            >
+
+          </div>
         </div>
-        <div class="bottom">
-          <div class="titles">
-            <div class="title">{{ $t('library.likedSongs') }}</div>
-            <div class="sub-title">
-              {{ liked.songs.length }} {{ $t('common.songs') }}
+
+        <div v-if="viewMode === 'grid'" class="grid-mode">
+          <div class="grid-wrapper" :style="gridStyle">
+            <div
+              v-for="(track, index) in mockTracks"
+              :key="track.id"
+              class="grid-item"
+              :class="{ active: index === activeIndex }"
+              @click="playMockTrack(index)"
+            >
+              <div class="cover">
+                <img :src="track.cover_url || fallbackCover" loading="lazy" />
+              </div>
+              <div class="info">
+                <div class="title" :title="track.title">{{ track.title }}</div>
+                <div class="artist">
+                  {{ track.description }}
+                </div>
+              </div>
             </div>
           </div>
-          <button @click.stop="openPlayModeTabMenu">
-            <svg-icon icon-class="play" />
-          </button>
         </div>
-      </div>
-      <div class="songs">
-        <TrackList
-          :id="liked.playlists.length > 0 ? liked.playlists[0].id : 0"
-          :tracks="liked.songsWithDetails"
-          :column-number="3"
-          type="tracklist"
-          dbclick-track-func="playPlaylistByID"
-        />
+
+        <div v-else class="list-mode">
+          <div
+            v-for="(track, index) in mockTracks"
+            :key="track.id"
+            class="list-row"
+            :class="{ active: index === activeIndex }"
+            @click="playMockTrack(index)"
+          >
+            <div class="col-title" style="display: flex; align-items: center">
+              <span v-if="index !== activeIndex">{{ index + 1 }}</span>
+              <svg-icon
+                v-else
+                style="width: 20px; height: 20px"
+                icon-class="volume"
+              />
+            </div>
+            <div class="col-title">{{ track.title }}</div>
+            <div class="col-time">{{
+              formatDuration(track.duration_seconds)
+            }}</div>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="section-two">
-      <div class="tabs-row">
-        <div class="tabs">
-          <div
-            class="tab dropdown"
-            :class="{ active: currentTab === 'playlists' }"
-            @click="updateCurrentTab('playlists')"
-          >
-            <span class="text">{{
-              {
-                all: $t('contextMenu.allPlaylists'),
-                mine: $t('contextMenu.minePlaylists'),
-                liked: $t('contextMenu.likedPlaylists'),
-              }[playlistFilter]
-            }}</span>
-            <span class="icon" @click.stop="openPlaylistTabMenu"
-              ><svg-icon icon-class="dropdown"
-            /></span>
-          </div>
-          <div
-            class="tab"
-            :class="{ active: currentTab === 'albums' }"
-            @click="updateCurrentTab('albums')"
-          >
-            {{ $t('library.albums') }}
-          </div>
-          <div
-            class="tab"
-            :class="{ active: currentTab === 'artists' }"
-            @click="updateCurrentTab('artists')"
-          >
-            {{ $t('library.artists') }}
-          </div>
-          <div
-            class="tab"
-            :class="{ active: currentTab === 'mvs' }"
-            @click="updateCurrentTab('mvs')"
-          >
-            {{ $t('library.mvs') }}
-          </div>
-          <div
-            class="tab"
-            :class="{ active: currentTab === 'cloudDisk' }"
-            @click="updateCurrentTab('cloudDisk')"
-          >
-            {{ $t('library.cloudDisk') }}
-          </div>
-          <div
-            class="tab"
-            :class="{ active: currentTab === 'playHistory' }"
-            @click="updateCurrentTab('playHistory')"
-          >
-            {{ $t('library.playHistory.title') }}
-          </div>
-        </div>
-        <button
-          v-show="currentTab === 'playlists'"
-          class="tab-button"
-          @click="openAddPlaylistModal"
-          ><svg-icon icon-class="plus" />{{ $t('library.newPlayList') }}
-        </button>
-        <button
-          v-show="currentTab === 'cloudDisk'"
-          class="tab-button"
-          @click="selectUploadFiles"
-          ><svg-icon icon-class="arrow-up-alt" />{{ $t('library.uploadSongs') }}
-        </button>
-      </div>
-
-      <div v-show="currentTab === 'playlists'">
-        <div v-if="liked.playlists.length > 1">
-          <CoverRow
-            :items="filterPlaylists"
-            type="playlist"
-            sub-text="creator"
-            :show-play-button="true"
-          />
-        </div>
-      </div>
-
-      <div v-show="currentTab === 'albums'">
-        <CoverRow
-          :items="liked.albums"
-          type="album"
-          sub-text="artist"
-          :show-play-button="true"
-        />
-      </div>
-
-      <div v-show="currentTab === 'artists'">
-        <CoverRow
-          :items="liked.artists"
-          type="artist"
-          :show-play-button="true"
-        />
-      </div>
-
-      <div v-show="currentTab === 'mvs'">
-        <MvRow :mvs="liked.mvs" />
-      </div>
-
-      <div v-show="currentTab === 'cloudDisk'">
-        <TrackList
-          :id="-8"
-          :tracks="liked.cloudDisk"
-          :column-number="3"
-          type="cloudDisk"
-          dbclick-track-func="playCloudDisk"
-          :extra-context-menu-item="['removeTrackFromCloudDisk']"
-        />
-      </div>
-
-      <div v-show="currentTab === 'playHistory'">
-        <button
-          :class="{
-            'playHistory-button': true,
-            'playHistory-button--selected': playHistoryMode === 'week',
-          }"
-          @click="playHistoryMode = 'week'"
-        >
-          {{ $t('library.playHistory.week') }}
-        </button>
-        <button
-          :class="{
-            'playHistory-button': true,
-            'playHistory-button--selected': playHistoryMode === 'all',
-          }"
-          @click="playHistoryMode = 'all'"
-        >
-          {{ $t('library.playHistory.all') }}
-        </button>
-        <TrackList
-          :tracks="playHistoryList"
-          :column-number="1"
-          type="tracklist"
-        />
-      </div>
-    </div>
-
-    <input
-      ref="cloudDiskUploadInput"
-      type="file"
-      style="display: none"
-      @change="uploadSongToCloudDisk"
-    />
-
-    <ContextMenu ref="playlistTabMenu">
-      <div class="item" @click="changePlaylistFilter('all')">{{
-        $t('contextMenu.allPlaylists')
-      }}</div>
-      <hr />
-      <div class="item" @click="changePlaylistFilter('mine')">{{
-        $t('contextMenu.minePlaylists')
-      }}</div>
-      <div class="item" @click="changePlaylistFilter('liked')">{{
-        $t('contextMenu.likedPlaylists')
-      }}</div>
-    </ContextMenu>
-
-    <ContextMenu ref="playModeTabMenu">
-      <div class="item" @click="playLikedSongs">{{
-        $t('library.likedSongs')
-      }}</div>
-      <hr />
-      <div class="item" @click="playIntelligenceList">{{
-        $t('contextMenu.cardiacMode')
-      }}</div>
-    </ContextMenu>
   </div>
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex';
-import { randomNum, dailyTask } from '@/utils/common';
-import { isAccountLoggedIn } from '@/utils/auth';
-import { uploadSong } from '@/api/user';
-import { getLyric } from '@/api/track';
-import NProgress from 'nprogress';
-import locale from '@/locale';
-
-import ContextMenu from '@/components/ContextMenu.vue';
-import TrackList from '@/components/TrackList.vue';
-import CoverRow from '@/components/CoverRow.vue';
-import SvgIcon from '@/components/SvgIcon.vue';
-import MvRow from '@/components/MvRow.vue';
-
-/**
- * Pick the lyric part from a string formed in `[timecode] lyric`.
- *
- * @param {string} rawLyric The raw lyric string formed in `[timecode] lyric`
- * @returns {string} The lyric part
- */
-function extractLyricPart(rawLyric) {
-  return rawLyric.split(']').pop().trim();
-}
-
+import MusicJson from '../mock/music.json';
+import { mapState } from 'vuex';
 export default {
   name: 'Library',
-  components: { SvgIcon, CoverRow, TrackList, MvRow, ContextMenu },
   data() {
     return {
-      show: false,
-      likedSongs: [],
-      lyric: undefined,
-      currentTab: 'playlists',
-      playHistoryMode: 'week',
+      show: true,
+      viewMode: 'grid',
+      activeIndex: '',
+      gridColumnNumber: 4,
+      fallbackCover:
+        'https://p2.music.126.net/UeTuwE7pvjBpypWLudqukA==/3132508627578625.jpg',
+      mockTracks: MusicJson,
     };
   },
+  mounted() {
+    this.updateGridColumns();
+    window.addEventListener('resize', this.updateGridColumns);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.updateGridColumns);
+  },
   computed: {
-    ...mapState(['data', 'liked']),
-    /**
-     * @returns {string[]}
-     */
-    pickedLyric() {
-      /** @type {string?} */
-      const lyric = this.lyric;
-
-      // Returns [] if we got no lyrics.
-      if (!lyric) return [];
-
-      const lyricLine = lyric
-        .split('\n')
-        .filter(line => !line.includes('作词') && !line.includes('作曲'));
-
-      // Pick 3 or fewer lyrics based on the lyric lines.
-      const lyricsToPick = Math.min(lyricLine.length, 3);
-
-      // The upperBound of the lyric line to pick
-      const randomUpperBound = lyricLine.length - lyricsToPick;
-      const startLyricLineIndex = randomNum(0, randomUpperBound - 1);
-
-      // Pick lyric lines to render.
-      return lyricLine
-        .slice(startLyricLineIndex, startLyricLineIndex + lyricsToPick)
-        .map(extractLyricPart);
+    gridStyle() {
+      return {
+        gridTemplateColumns: `repeat(${this.gridColumnNumber}, 1fr)`,
+      };
     },
-    playlistFilter() {
-      return this.data.libraryPlaylistFilter || 'all';
-    },
-    filterPlaylists() {
-      const playlists = this.liked.playlists.slice(1);
-      const userId = this.data.user.userId;
-      if (this.playlistFilter === 'mine') {
-        return playlists.filter(p => p.creator.userId === userId);
-      } else if (this.playlistFilter === 'liked') {
-        return playlists.filter(p => p.creator.userId !== userId);
-      }
-      return playlists;
-    },
-    playHistoryList() {
-      if (this.show && this.playHistoryMode === 'week') {
-        return this.liked.playHistory.weekData;
-      }
-      if (this.show && this.playHistoryMode === 'all') {
-        return this.liked.playHistory.allData;
-      }
-      return [];
-    },
+    ...mapState(['playerBar']),
   },
-  created() {
-    setTimeout(() => {
-      if (!this.show) NProgress.start();
-    }, 1000);
-    this.loadData();
-  },
-  activated() {
-    this.$parent.$refs.scrollbar.restorePosition();
-    this.loadData();
-    dailyTask();
+  watch: {
+    playerBar: {
+      immediate: true,
+      handler(newVal) {
+        if (!newVal) return;
+        if (typeof newVal.index === 'number') {
+          this.activeIndex = newVal.index;
+        }
+      },
+    },
   },
   methods: {
-    ...mapActions(['showToast']),
-    ...mapMutations(['updateModal', 'updateData']),
-    loadData() {
-      if (this.liked.songsWithDetails.length > 0) {
-        NProgress.done();
-        this.show = true;
-        this.$store.dispatch('fetchLikedSongsWithDetails');
-        this.getRandomLyric();
+    updateGridColumns() {
+      const width = window.innerWidth;
+      if (width <= 640) {
+        this.gridColumnNumber = 1;
+      } else if (width <= 1024) {
+        this.gridColumnNumber = 2;
       } else {
-        this.$store.dispatch('fetchLikedSongsWithDetails').then(() => {
-          NProgress.done();
-          this.show = true;
-          this.getRandomLyric();
-        });
+        this.gridColumnNumber = 4;
       }
-      this.$store.dispatch('fetchLikedSongs');
-      this.$store.dispatch('fetchLikedPlaylist');
-      this.$store.dispatch('fetchLikedAlbums');
-      this.$store.dispatch('fetchLikedArtists');
-      this.$store.dispatch('fetchLikedMVs');
-      this.$store.dispatch('fetchCloudDisk');
-      this.$store.dispatch('fetchPlayHistory');
     },
-    playLikedSongs() {
-      this.$store.state.player.playPlaylistByID(
-        this.liked.playlists[0].id,
-        'first',
-        true
-      );
+    formatDuration(ms) {
+      const totalSeconds = ms;
+      const minutes = Math.floor(totalSeconds / 60);
+      const seconds = totalSeconds % 60;
+      return `${minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
     },
-    playIntelligenceList() {
-      this.$store.state.player.playIntelligenceListById(
-        this.liked.playlists[0].id,
-        'first',
-        true
-      );
-    },
-    updateCurrentTab(tab) {
-      if (!isAccountLoggedIn() && tab !== 'playlists') {
-        this.showToast(locale.t('toast.needToLogin'));
-        return;
-      }
-      this.currentTab = tab;
-      this.$parent.$refs.main.scrollTo({ top: 375, behavior: 'smooth' });
-    },
-    goToLikedSongsList() {
-      this.$router.push({ path: '/library/liked-songs' });
-    },
-    getRandomLyric() {
-      if (this.liked.songs.length === 0) return;
-      getLyric(
-        this.liked.songs[randomNum(0, this.liked.songs.length - 1)]
-      ).then(data => {
-        if (data.lrc !== undefined) {
-          const isInstrumental = data.lrc.lyric
-            .split('\n')
-            .filter(l => l.includes('纯音乐，请欣赏'));
-          if (isInstrumental.length === 0) {
-            this.lyric = data.lrc.lyric;
-          }
-        }
-      });
-    },
-    openAddPlaylistModal() {
-      if (!isAccountLoggedIn()) {
-        this.showToast(locale.t('toast.needToLogin'));
-        return;
-      }
-      this.updateModal({
-        modalName: 'newPlaylistModal',
-        key: 'show',
-        value: true,
-      });
-    },
-    openPlaylistTabMenu(e) {
-      this.$refs.playlistTabMenu.openMenu(e);
-    },
-    openPlayModeTabMenu(e) {
-      this.$refs.playModeTabMenu.openMenu(e);
-    },
-    changePlaylistFilter(type) {
-      this.updateData({ key: 'libraryPlaylistFilter', value: type });
-      window.scrollTo({ top: 375, behavior: 'smooth' });
-    },
-    selectUploadFiles() {
-      this.$refs.cloudDiskUploadInput.click();
-    },
-    uploadSongToCloudDisk(e) {
-      const files = e.target.files;
-      uploadSong(files[0]).then(result => {
-        if (result.code === 200) {
-          let newCloudDisk = this.liked.cloudDisk;
-          newCloudDisk.unshift(result.privateCloud);
-          this.$store.commit('updateLikedXXX', {
-            name: 'cloudDisk',
-            data: newCloudDisk,
-          });
-        }
+    playMockTrack(index) {
+      this.activeIndex = index;
+      const track = this.mockTracks[index];
+      if (!track) return;
+      this.$store.commit('updatePlayerBar', {
+        index,
+        audioUrl: track.audio_url,
+        title: track.title,
+        description: track.description,
+        cover: track.cover_url,
+        durationSeconds: track.duration_seconds,
       });
     },
   },
@@ -418,18 +141,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h1 {
-  font-size: 42px;
-  color: var(--color-text);
-  display: flex;
-  align-items: center;
-  .avatar {
-    height: 44px;
-    margin-right: 12px;
-    vertical-align: -7px;
-    border-radius: 50%;
-    border: rgba(0, 0, 0, 0.2);
-  }
+.library {
+  width: 100%;
 }
 
 .section-one {
@@ -440,185 +153,187 @@ h1 {
     margin-top: 8px;
     margin-left: 36px;
     overflow: hidden;
-  }
-}
 
-.liked-songs {
-  flex: 3;
-  margin-top: 8px;
-  cursor: pointer;
-  border-radius: 16px;
-  padding: 18px 24px;
-  display: flex;
-  flex-direction: column;
-  transition: all 0.4s;
-  box-sizing: border-box;
-
-  background: var(--color-primary-bg);
-
-  .bottom {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--color-primary);
-
-    .title {
-      font-size: 24px;
-      font-weight: 700;
-    }
-    .sub-title {
-      font-size: 15px;
-      margin-top: 2px;
-    }
-
-    button {
-      margin-bottom: 2px;
+    .toolbar {
       display: flex;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      height: 44px;
-      width: 44px;
-      background: var(--color-primary);
-      border-radius: 50%;
-      transition: 0.2s;
-      box-shadow: 0 6px 12px -4px rgba(0, 0, 0, 0.2);
-      cursor: default;
-
-      .svg-icon {
-        color: var(--color-primary-bg);
-        margin-left: 4px;
-        height: 16px;
-        width: 16px;
+      margin-bottom: 16px;
+      .title {
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--color-text);
       }
-      &:hover {
-        transform: scale(1.06);
-        box-shadow: 0 6px 12px -4px rgba(0, 0, 0, 0.4);
-      }
-      &:active {
-        transform: scale(0.94);
-      }
-    }
-  }
+      .view-switch {
+        display: inline-flex;
+        padding: 2px;
+        .button {
+          user-select: none;
+          cursor: pointer;
+          padding: 8px 16px;
+          margin: 10px 16px 6px 10px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: 600;
+          font-size: 16px;
+          border-radius: 10px;
+          background-color: var(--color-secondary-bg);
+          color: var(--color-secondary);
+          transition: 0.2s;
 
-  .top {
-    flex: 1;
-    display: flex;
-    flex-wrap: wrap;
-    font-size: 14px;
-    opacity: 0.88;
-    color: var(--color-primary);
-    p {
-      margin-top: 2px;
-    }
-  }
-}
-
-.section-two {
-  margin-top: 54px;
-  min-height: calc(100vh - 182px);
-}
-
-.tabs-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 24px;
-}
-
-.tabs {
-  display: flex;
-  flex-wrap: wrap;
-  font-size: 18px;
-  color: var(--color-text);
-  .tab {
-    font-weight: 600;
-    padding: 8px 14px;
-    margin-right: 14px;
-    border-radius: 8px;
-    cursor: pointer;
-    user-select: none;
-    transition: 0.2s;
-    opacity: 0.68;
-    &:hover {
-      opacity: 0.88;
-      background-color: var(--color-secondary-bg);
-    }
-  }
-  .tab.active {
-    opacity: 0.88;
-    background-color: var(--color-secondary-bg);
-  }
-  .tab.dropdown {
-    display: flex;
-    align-items: center;
-    padding: 0;
-    overflow: hidden;
-    .text {
-      padding: 8px 3px 8px 14px;
-    }
-    .icon {
-      height: 100%;
-      display: flex;
-      align-items: center;
-      padding: 0 8px 0 3px;
-      .svg-icon {
-        height: 16px;
-        width: 16px;
+          &.active {
+            background-color: var(--color-primary-bg);
+            color: var(--color-primary);
+          }
+        }
+        .switch-btn {
+          border: none;
+          background: transparent;
+          padding: 4px 12px;
+          border-radius: 999px;
+          font-size: 13px;
+          cursor: pointer;
+          color: var(--color-text);
+          opacity: 0.7;
+        }
+        .switch-btn.active {
+          background: #fff;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+          opacity: 1;
+        }
       }
     }
-  }
-}
 
-button.tab-button {
-  color: var(--color-text);
-  border-radius: 8px;
-  padding: 0 14px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transition: 0.2s;
-  opacity: 0.68;
-  font-weight: 500;
-  .svg-icon {
-    width: 14px;
-    height: 14px;
-    margin-right: 8px;
-  }
-  &:hover {
-    opacity: 1;
-    background: var(--color-secondary-bg);
-  }
-  &:active {
-    opacity: 1;
-    transform: scale(0.92);
-  }
-}
+    .grid-mode {
+      margin-top: 8px;
+      .grid-wrapper {
+        display: grid;
+        gap: 18px 36px;
+      }
+      .grid-item {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        padding: 6px 12px;
+        border-radius: 8px;
+        transition: 0.3s;
 
-button.playHistory-button {
-  color: var(--color-text);
-  border-radius: 8px;
-  padding: 6px 8px;
-  margin-bottom: 12px;
-  margin-right: 4px;
-  transition: 0.2s;
-  opacity: 0.68;
-  font-weight: 500;
-  cursor: pointer;
-  &:hover {
-    opacity: 1;
-    background: var(--color-secondary-bg);
-  }
-  &:active {
-    transform: scale(0.95);
-  }
-}
+        &.active {
+          background-color: var(--color-primary-bg);
+        }
+      }
+      .grid-item:hover {
+        background-color: var(--color-primary-bg);
+      }
+      .cover img {
+        width: 64px;
+        height: 64px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-right: 14px;
+      }
+      .info {
+        display: flex;
+        flex-direction: column;
+      }
+      .info .title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--color-text);
+        line-height: 1.3;
+        max-width: 230px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .info .artist {
+        margin-top: 2px;
+        font-size: 13px;
+        opacity: 0.7;
+        color: var(--color-text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+      }
+    }
 
-button.playHistory-button--selected {
-  color: var(--color-text);
-  background: var(--color-secondary-bg);
-  opacity: 1;
-  font-weight: 700;
-  &:active {
-    transform: none;
+    .list-mode {
+      margin-top: 8px;
+      border-radius: 999px;
+      .list-header {
+        display: grid;
+        grid-template-columns: 40px 150px 1fr;
+        padding: 8px 16px;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        opacity: 0.6;
+        color: var(--color-text);
+      }
+      .list-row {
+        display: grid;
+        grid-template-columns: 40px 150px 1fr;
+        align-items: center;
+        padding: 10px 18px;
+        font-size: 16px;
+        color: var(--color-text);
+        cursor: pointer;
+        transition: background 0.15s ease, color 0.15s ease;
+        border-radius: 8px;
+      }
+      .list-row:hover {
+        background: rgba(0, 0, 0, 0.03);
+      }
+      .list-row.active {
+        background: var(--color-primary-bg);
+        color: var(--color-primary);
+      }
+      .col-title {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-weight: 600;
+      }
+      .col-time {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+    }
+
+    @media (max-width: 640px) {
+      margin-left: 16px;
+      .toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .grid-mode {
+        .grid-wrapper {
+          gap: 14px 16px;
+        }
+        .cover img {
+          width: 40px;
+          height: 40px;
+          margin-right: 12px;
+        }
+        .info .title {
+          max-width: 160px;
+          font-size: 14px;
+        }
+        .info .artist {
+          font-size: 12px;
+        }
+      }
+      .list-mode {
+        .list-header,
+        .list-row {
+          grid-template-columns: 32px 1fr 48px;
+          padding: 6px 12px;
+        }
+      }
+    }
   }
 }
 </style>

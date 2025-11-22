@@ -58,6 +58,9 @@ export default {
   updateLastfm(state, session) {
     state.lastfm = session;
   },
+  updatePlayerBar(state, payload) {
+    state.playerBar = payload;
+  },
   updateShortcut(state, { id, type, shortcut }) {
     let newShortcut = state.settings.shortcuts.find(s => s.id === id);
     newShortcut[type] = shortcut;

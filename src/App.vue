@@ -22,7 +22,16 @@
       </div>
     </main>
     <transition name="slide-up">
-      <Player v-if="enablePlayer" v-show="showPlayer" ref="player" />
+      <PlayerBar
+        v-if="enablePlayer && playerBar && playerBar.audioUrl"
+        v-show="showPlayer"
+        ref="player"
+        :audio-url="playerBar.audioUrl"
+        :title="playerBar.title"
+        :description="playerBar.description"
+        :cover="playerBar.cover"
+        :duration-seconds="playerBar.durationSeconds"
+      />
     </transition>
     <Toast />
     <ModalAddTrackToPlaylist v-if="isAccountLoggedIn" />
@@ -38,7 +47,7 @@ import ModalAddTrackToPlaylist from './components/ModalAddTrackToPlaylist.vue';
 import ModalNewPlaylist from './components/ModalNewPlaylist.vue';
 import Scrollbar from './components/Scrollbar.vue';
 import Navbar from './components/Navbar.vue';
-import Player from './components/Player.vue';
+import PlayerBar from './components/PlayerBar.vue';
 import Toast from './components/Toast.vue';
 import { isAccountLoggedIn, isLooseLoggedIn } from '@/utils/auth';
 import Lyrics from './views/lyrics.vue';
@@ -48,7 +57,7 @@ export default {
   name: 'App',
   components: {
     Navbar,
-    Player,
+    PlayerBar,
     Toast,
     ModalAddTrackToPlaylist,
     ModalNewPlaylist,
@@ -61,7 +70,13 @@ export default {
     };
   },
   computed: {
-    ...mapState(['showLyrics', 'settings', 'player', 'enableScrolling']),
+    ...mapState([
+      'showLyrics',
+      'settings',
+      'player',
+      'enableScrolling',
+      'playerBar',
+    ]),
     isAccountLoggedIn() {
       return isAccountLoggedIn();
     },
@@ -77,7 +92,7 @@ export default {
       );
     },
     enablePlayer() {
-      return this.player.enabled && this.$route.name !== 'lastfmCallback';
+      return true;
     },
     showNavbar() {
       return this.$route.name !== 'lastfmCallback';

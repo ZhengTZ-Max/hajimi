@@ -171,7 +171,9 @@ export default {
       return this.$parent.liked.songs.includes(this.track?.id);
     },
     isPlaying() {
-      return this.$store.state.player.currentTrack.id === this.track?.id;
+      const player = this.$store.state.player || {};
+      const currentTrack = player.currentTrack || {};
+      return currentTrack.id === this.track?.id;
     },
     trackClass() {
       let trackClass = [this.type];
@@ -399,16 +401,16 @@ button {
 }
 
 .track.tracklist {
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 8px;
+  flex-direction: row;
+  align-items: center;
+  padding: 10px 14px;
 
   img {
-    width: 100%;
-    height: auto;
     border-radius: 10px;
-    margin-right: 0;
-    margin-bottom: 8px;
+    height: 40px;
+    width: 40px;
+    margin-right: 12px;
+    margin-bottom: 0;
     cursor: pointer;
   }
 
@@ -417,10 +419,15 @@ button {
   }
 
   .title {
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.4;
     padding-right: 0;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 1;
+  }
+
+  .artist {
+    margin-top: 2px;
+    font-size: 13px;
   }
 }
 

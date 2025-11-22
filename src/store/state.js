@@ -51,4 +51,5 @@ export default {
   player: JSON.parse(localStorage.getItem('player')),
   settings: JSON.parse(localStorage.getItem('settings')),
   data: JSON.parse(localStorage.getItem('data')),
+  playerBar: null,
 };

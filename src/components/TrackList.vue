@@ -1,6 +1,6 @@
 <template>
   <div class="track-list">
-    <ContextMenu ref="menu">
+    <!-- <ContextMenu ref="menu">
       <div v-show="type !== 'cloudDisk'" class="item-info">
         <img
           :src="rightClickedTrackComputed.al.picUrl | resizeImage(224)"
@@ -58,7 +58,7 @@
         @click="removeTrackFromCloudDisk"
         >从云盘中删除</div
       >
-    </ContextMenu>
+    </ContextMenu> -->
 
     <div :style="listStyles">
       <TrackListItem
@@ -174,8 +174,8 @@ export default {
     if (this.type === 'tracklist') {
       this.listStyles = {
         display: 'grid',
-        gap: '4px',
-        gridTemplateColumns: `repeat(${this.columnNumber}, 1fr)`,
+        gap: '16px',
+        gridTemplateColumns: `repeat(${this.columnNumber}, minmax(0, 1fr))`,
       };
     }
   },

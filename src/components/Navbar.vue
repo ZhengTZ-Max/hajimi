@@ -18,11 +18,11 @@
           :class="{ active: $route.name === 'explore' }"
           >{{ $t('nav.explore') }}</router-link
         > -->
-        <!-- <router-link
+        <router-link
           to="/library"
           :class="{ active: $route.name === 'library' }"
           >{{ $t('nav.library') }}</router-link
-        > -->
+        >
       </div>
       <div class="right-part">
         <div class="search-box">
