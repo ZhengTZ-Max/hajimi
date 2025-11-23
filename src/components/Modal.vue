@@ -86,10 +86,10 @@ export default {
   width: 50vw;
   margin: auto 0;
   font-size: 14px;
-  z-index: 100;
+  z-index: 999;
   display: flex;
   flex-direction: column;
-  max-height: calc(100vh - 128px - 64px);
+  max-height: 80%;
 
   ::-webkit-scrollbar {
     width: 4px;

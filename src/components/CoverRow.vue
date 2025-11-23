@@ -268,6 +268,13 @@ export default {
 
       this.pendingItem = item;
 
+      // 移动端：直接站外播放
+      if (this.isMobile()) {
+        this.playOutside(item);
+        return;
+      }
+
+      // 桌面端：按设置决定是否弹出选择弹窗
       if (enableChoice) {
         this.showPlayChoiceModal = true;
       } else {
@@ -283,10 +290,10 @@ export default {
       this.showExternalModal = true;
       this.isMiniPlayer = false;
     },
-    playOutside() {
-      const item = this.pendingItem;
-      if (!item || !item.url) return;
-      window.open(item.url, '_blank');
+    playOutside(item) {
+      const target = item || this.pendingItem;
+      if (!target || !target.url) return;
+      window.open(target.url, '_blank');
       this.showPlayChoiceModal = false;
     },
     minimizeExternal() {
@@ -303,6 +310,18 @@ export default {
       this.externalTitle = '';
       this.isMiniPlayer = false;
       this.pendingItem = null;
+    },
+    isMobile() {
+      // 简单的移动端判断：优先使用屏幕宽度，其次使用 UA
+      if (typeof window !== 'undefined') {
+        if (window.innerWidth && window.innerWidth <= 768) return true;
+      }
+      if (typeof navigator !== 'undefined') {
+        return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent,
+        );
+      }
+      return false;
     },
   },
 };

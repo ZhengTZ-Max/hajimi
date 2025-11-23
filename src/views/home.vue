@@ -6,12 +6,12 @@
         <div class="button hoverBtn" :class="{ active: active == '0' }"
           >Bilibili</div
         >
-        <div class="button hoverBtn" :class="{ active: active == '1' }"
+        <!-- <div class="button hoverBtn" :class="{ active: active == '1' }"
           >Tiktok · CN</div
         >
         <div class="button hoverBtn" :class="{ active: active == '2' }"
           >Tiktok</div
-        >
+        > -->
       </div>
       <CoverRow
         :type="'playlist'"
