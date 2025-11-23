@@ -88,7 +88,7 @@ export default {
 
 .video-element {
   width: 100%;
-   
+
   max-height: 70vh;
   display: block;
   border-radius: 12px;
