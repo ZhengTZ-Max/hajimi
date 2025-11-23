@@ -5,14 +5,14 @@
   "description": "A third party music player for Netease Music",
   "author": "qier222<qier222@outlook.com>",
   "scripts": {
-    "build": "vue-cli-service build",
+    "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider vue-cli-service build",
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint",
     "prettier": "npx prettier --write ./src"
   },
   "main": "src/main.js",
   "engines": {
-    "node": "16.x"
+    "node": "22.x"
   },
   "dependencies": {
     "axios": "^0.26.1",
@@ -51,9 +51,9 @@
     "@vue/cli-plugin-vuex": "~4.5.0",
     "@vue/cli-service": "~4.5.0",
     "babel-eslint": "^10.1.0",
+    "cross-env": "^7.0.3",
     "esbuild": "^0.27.0",
     "esbuild-loader": "^4.4.0",
-    "cross-env": "^7.0.3",
     "eslint": "^6.7.2",
     "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.3.1",
