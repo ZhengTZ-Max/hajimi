@@ -136,10 +136,6 @@
 
 <script>
 import VideoModal from '@/components/VideoModal.vue';
-import video1 from '@/assets/video/1.mp4';
-import video2 from '@/assets/video/2.mp4';
-import video3 from '@/assets/video/3.mp4';
-import video4 from '@/assets/video/4.mp4';
 export default {
   name: 'Explore',
   components: {
@@ -155,28 +151,28 @@ export default {
         {
           label: '《哈基米编年史》 第一集',
           desc: '初期解构',
-          videoUrl: video1,
+          videoUrl: '/video/1.mp4',
           cover:
             'https://i0.hdslb.com/bfs/archive/1a0fc5a3fa155a52ed412ecdcfda6c2fcac3eded.jpg@672w_378h_1c.avif',
         },
         {
           label: '《哈基米编年史》 第二集',
           desc: '萌宠解构',
-          videoUrl: video2,
+          videoUrl: '/video/2.mp4',
           cover:
             'https://i0.hdslb.com/bfs/archive/18ae55000ae595186985c558b3170c1b37172fe8.jpg@672w_378h_1c.avif',
         },
         {
           label: '《哈基米编年史》 第三集',
           desc: '音符与猫咪解构',
-          videoUrl: video3,
+          videoUrl: '/video/3.mp4',
           cover:
             'https://i0.hdslb.com/bfs/archive/628e3f5bd5eff412fd33a4e02ef8cf9d61ac908d.jpg@672w_378h_1c.avif',
         },
         {
           label: '《哈基米编年史》第四集',
           desc: '一杯水，一只猫，一个时代，即是万物。',
-          videoUrl: video4,
+          videoUrl: '/video/4.mp4',
           cover:
             'https://i0.hdslb.com/bfs/archive/dafec852a872a2213569af3107b7d431192d1008.jpg@672w_378h_1c.avif',
         },
@@ -185,9 +181,8 @@ export default {
   },
   methods: {
     openPlayer(item) {
-      console.log();
       this.findRow = item;
-      const fallback = video1;
+      const fallback = '/video/1.mp4';
       this.currentVideoUrl = item && item.videoUrl ? item.videoUrl : fallback;
       this.showPlayer = true;
     },
