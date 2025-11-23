@@ -290,8 +290,9 @@ export default {
       this.showExternalModal = true;
       this.isMiniPlayer = false;
     },
-    playOutside(item) {
-      const target = item || this.pendingItem;
+    playOutside(arg) {
+      // 按钮直接绑定 @click="playOutside" 时，第一个参数是事件对象而不是 item
+      const target = arg && arg.url ? arg : this.pendingItem;
       if (!target || !target.url) return;
       window.open(target.url, '_blank');
       this.showPlayChoiceModal = false;
@@ -404,7 +405,7 @@ export default {
   background: var(--color-body-bg);
   border-radius: 12px;
   width: 90vw;
-  max-width: 960px;
+  max-width: 1280px;
   height: 70vh;
   max-height: 720px;
   display: flex;
@@ -467,8 +468,8 @@ export default {
   position: fixed;
   right: 16px;
   bottom: 16px;
-  width: 240px;
-  height: 240px;
+  width: 360px;
+  height: 360px;
   background: var(--color-body-bg);
   border-radius: 12px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);

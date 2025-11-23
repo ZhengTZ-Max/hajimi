@@ -12,7 +12,7 @@
   },
   "main": "src/main.js",
   "engines": {
-    "node": "22.x"
+    "node": "16.x"
   },
   "dependencies": {
     "axios": "^0.26.1",
