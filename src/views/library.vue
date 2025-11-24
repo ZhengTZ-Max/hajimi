@@ -291,13 +291,7 @@ export default {
         height: 64px;
         border-radius: 8px;
         margin-right: 14px;
-        background: linear-gradient(
-          90deg,
-          #e5e7eb 0%,
-          #f3f4f6 40%,
-          #e5e7eb 80%
-        );
-        background-size: 200% 100%;
+     
         animation: skeleton-loading 1.2s ease-in-out infinite;
       }
       .info {

@@ -198,6 +198,7 @@ export default {
 
 <style lang="scss" scoped>
 .explore-container {
+  box-sizing: border-box;
   width: 100%;
   padding: 24px;
 }
@@ -447,7 +448,7 @@ export default {
 
 @media (max-width: 768px) {
   .explore-container {
-    padding: 16px 12px;
+    padding: 44px 12px 16px 12px;
   }
 
   .category-container {
