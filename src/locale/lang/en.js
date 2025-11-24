@@ -5,7 +5,7 @@ export default {
   },
   nav: {
     home: 'Hajimi',
-    library: 'Sound of Mambo',
+    library: 'Hajimi Music',
     explore: 'Introduction',
     search: 'Search',
     github: 'GitHub Repo',

@@ -294,7 +294,9 @@ export default {
       if (!item || !item.url) return;
       if (this.activeType == 'bili') {
         console.log(this.extractBvid(item.url));
-        this.externalUrl = `https://player.bilibili.com/player.html?bvid=${this.extractBvid(item.url)}&autoplay=1&page=1`;
+        this.externalUrl = `https://player.bilibili.com/player.html?bvid=${this.extractBvid(
+          item.url
+        )}&autoplay=1&page=1`;
       } else {
         this.externalUrl = item.url;
       }

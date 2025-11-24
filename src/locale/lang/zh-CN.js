@@ -5,7 +5,7 @@ export default {
   },
   nav: {
     home: '哈基米',
-    library: '曼波之音',
+    library: '哈基米音乐',
     explore: '哈基米文化介绍',
     search: '搜索',
     github: 'GitHub 仓库',
