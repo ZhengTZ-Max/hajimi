@@ -23,6 +23,7 @@
     "dayjs": "^1.8.36",
     "dexie": "^3.0.3",
     "howler": "^2.2.3",
+    "i18n-jsautotranslate": "^3.18.89",
     "js-cookie": "^2.2.1",
     "jsbi": "^4.1.0",
     "lodash": "^4.17.20",

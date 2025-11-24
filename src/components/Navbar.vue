@@ -10,9 +10,7 @@
         /></button-icon>
       </div>
       <div class="navigation-links">
-        <router-link to="/" :class="{ active: $route.name === 'home' }">{{
-          $t('nav.home')
-        }}</router-link>
+        <router-link to="/" :class="{ active: $route.name === 'home' }">哈基米视频</router-link>
         <!-- <router-link
           to="/explore"
           :class="{ active: $route.name === 'explore' }"
@@ -21,13 +19,13 @@
         <router-link
           to="/library"
           :class="{ active: $route.name === 'library' }"
-          >{{ $t('nav.library') }}</router-link
+          >哈基米音乐</router-link
         >
 
         <router-link
           to="/explore"
           :class="{ active: $route.name === 'explore' }"
-          >{{ $t('nav.explore') }}</router-link
+          >哈基米文化介绍</router-link
         >
       </div>
       <div class="right-part">
@@ -39,7 +37,7 @@
                 ref="searchInput"
                 v-model="keywords"
                 type="search"
-                :placeholder="inputFocus ? '' : $t('nav.search')"
+                placeholder="搜索"
                 @keydown.enter="doSearch"
                 @focus="inputFocus = true"
                 @blur="inputFocus = false"
@@ -118,7 +116,7 @@ import 'vscode-codicons/dist/codicon.css';
 
 import ContextMenu from '@/components/ContextMenu.vue';
 import ButtonIcon from '@/components/ButtonIcon.vue';
-import { transform } from 'lodash';
+import translate from 'i18n-jsautotranslate';
 
 export default {
   name: 'Navbar',
@@ -130,7 +128,7 @@ export default {
     return {
       inputFocus: false,
       langs: ['zh-CN', 'en'],
-      currentLang: 'zh-CN',
+      currentLang: localStorage.getItem('lang'),
       keywords: '',
     };
   },
@@ -173,15 +171,25 @@ export default {
       doLogout();
       this.$router.push({ name: 'home' });
     },
-    toggleLang() {
-      this.currentLang = this.currentLang == 'zh-CN' ? 'en' : 'zh-CN';
 
-      this.$i18n.locale = this.currentLang;
+    async toggleLang() {
+      this.currentLang = this.currentLang == 'zh-CN' ? 'en' : 'zh-CN';
+      localStorage.setItem('lang', this.currentLang);
+      // this.$i18n.locale = this.currentLang;
       this.$store.commit('changeLang', this.currentLang);
-      if (this.currentLang == 'zh-CN') {
-        translate.changeLanguage('zh');
+
+      // 根据当前语言切换 translate.js 的内部语言 ID
+      if (this.currentLang !== 'zh-CN') {
+        // 简体中文
+        translate.changeLanguage('chinese_simplified');
       } else {
+        // 英文
         translate.changeLanguage('english');
+      }
+
+      // 对当前 DOM 重新执行一次翻译，确保立即生效
+      if (typeof translate.execute === 'function') {
+        translate.execute();
       }
     },
     togglePlayChoice() {
@@ -292,6 +300,7 @@ nav.has-custom-titlebar {
     padding: 6px 10px;
     color: var(--color-text);
     transition: 0.2s;
+    text-align: center;
     -webkit-user-drag: none;
     margin: {
       right: 12px;

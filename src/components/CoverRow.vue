@@ -94,7 +94,7 @@
       class="external-modal-overlay"
       @click.self="closeExternal"
     >
-      <div class="external-modal">
+      <div class="external-modal" :class="{ mobileModal: isMobile() }">
         <div class="external-modal-header">
           <div class="external-modal-title">{{ externalTitle }}</div>
           <div class="external-modal-actions">
@@ -108,10 +108,9 @@
         </div>
         <div class="external-modal-body">
           <iframe
-            v-if="externalUrl"
             :src="externalUrl"
             frameborder="0"
-            sandbox="allow-same-origin allow-scripts allow-popups"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen
           ></iframe>
         </div>
@@ -268,17 +267,15 @@ export default {
 
       this.pendingItem = item;
 
-      // 移动端：直接站外播放
-      if (this.isMobile()) {
-        this.playOutside(item);
-        return;
-      }
-
       // 桌面端：按设置决定是否弹出选择弹窗
-      if (enableChoice) {
-        this.showPlayChoiceModal = true;
+      if (this.activeType == 'douyin') {
+        window.open(item.url, '_blank');
       } else {
-        this.playInside();
+        if (enableChoice) {
+          this.showPlayChoiceModal = true;
+        } else {
+          this.playInside();
+        }
       }
     },
     extractBvid(url) {
@@ -293,10 +290,15 @@ export default {
       const item = this.pendingItem;
       if (!item || !item.url) return;
       if (this.activeType == 'bili') {
-        console.log(this.extractBvid(item.url));
-        this.externalUrl = `https://player.bilibili.com/player.html?bvid=${this.extractBvid(
-          item.url
-        )}&autoplay=1&page=1`;
+        if (this.isMobile()) {
+          this.externalUrl = `https://player.bilibili.com/player.html?bvid=${this.extractBvid(
+            item.url
+          )}&autoplay=0&page=1`;
+        } else {
+          this.externalUrl = `https://player.bilibili.com/player.html?bvid=${this.extractBvid(
+            item.url
+          )}&autoplay=1&page=1&muted=0`;
+        }
       } else {
         this.externalUrl = item.url;
       }
@@ -426,6 +428,10 @@ export default {
   display: flex;
   flex-direction: column;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+
+  &.mobileModal {
+    height: 50vh;
+  }
 }
 
 .external-modal-header {
@@ -483,8 +489,8 @@ export default {
   position: fixed;
   right: 16px;
   bottom: 16px;
-  width: 360px;
-  height: 360px;
+  width: 240px;
+  height: 240px;
   background: var(--color-body-bg);
   border-radius: 12px;
   box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);

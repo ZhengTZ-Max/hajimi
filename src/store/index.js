@@ -20,7 +20,7 @@ const options = {
 const store = new Vuex.Store(options);
 
 if ([undefined, null].includes(store.state.settings.lang)) {
-  const defaultLang = 'en';
+  const defaultLang = 'zh';
   const langMapper = new Map()
     .set('zh', 'zh-CN')
     .set('zh-TW', 'zh-TW')
