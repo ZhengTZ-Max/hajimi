@@ -291,7 +291,7 @@ export default {
         height: 64px;
         border-radius: 8px;
         margin-right: 14px;
-     
+
         animation: skeleton-loading 1.2s ease-in-out infinite;
       }
       .info {
