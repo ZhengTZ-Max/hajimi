@@ -3,7 +3,7 @@
     <div class="index-row first-row">
       <div class="title">
         分类：
-        <div class="button hoverBtn" :class="{ active: active == '0' }"
+        <div class="button hoverBtn" :class="{ active: active == 'bili' }"
           >Bilibili</div
         >
         <!-- <div class="button hoverBtn" :class="{ active: active == '1' }"
@@ -17,6 +17,7 @@
         :type="'playlist'"
         :items="visibleHotList"
         :use-external-url="true"
+        :activeType="active"
       />
     </div>
   </div>
@@ -34,7 +35,7 @@ export default {
   data() {
     return {
       HotList,
-      active: '0',
+      active: 'bili',
       pageSize: 12,
       visibleCount: 12,
       scrollEl: null,

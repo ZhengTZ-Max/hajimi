@@ -134,7 +134,6 @@
           v-if="externalUrl"
           :src="externalUrl"
           frameborder="0"
-          sandbox="allow-same-origin allow-scripts allow-popups"
           allowfullscreen
         ></iframe>
       </div>
@@ -174,6 +173,7 @@ export default {
   },
   props: {
     items: { type: Array, required: true },
+    activeType: { type: String, required: true },
     type: { type: String, required: true },
     subText: { type: String, default: 'none' },
     subTextFontSize: { type: String, default: '16px' },
@@ -281,10 +281,23 @@ export default {
         this.playInside();
       }
     },
+    extractBvid(url) {
+      // 正则匹配 /video/BVxxxxxxxxxx/ 中的 BV + 10位字符
+      const match = url.match(/\/video\/(BV[0-9A-Za-z]{10})\//);
+      if (match && match[1]) {
+        return match[1]; // 返回 BV1RGNJzCEXq
+      }
+      return null; // 如果没有匹配到，返回 null
+    },
     playInside() {
       const item = this.pendingItem;
       if (!item || !item.url) return;
-      this.externalUrl = item.url;
+      if (this.activeType == 'bili') {
+        console.log(this.extractBvid(item.url));
+        this.externalUrl = `https://player.bilibili.com/player.html?bvid=${this.extractBvid(item.url)}&autoplay=1&page=1`;
+      } else {
+        this.externalUrl = item.url;
+      }
       this.externalTitle = this.getDisplayTitle(item);
       this.showPlayChoiceModal = false;
       this.showExternalModal = true;
