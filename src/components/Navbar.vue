@@ -1,7 +1,16 @@
 <template>
   <div>
     <nav :class="{ 'has-custom-titlebar': hasCustomTitlebar }">
-      <div class="navigation-buttons">
+      <!-- Mobile overlay for drawer -->
+      <div
+        v-if="isMobileMenuOpen"
+        class="mobile-overlay"
+        @click="toggleMobileMenu"
+      ></div>
+      <div class="logo-area">
+        <div class="logo" @click="$router.push('/')">
+          <img src="@/assets/images/hajimi.png" alt="" />
+        </div>
         <!-- <button-icon @click.native="go('back')"
           ><svg-icon icon-class="arrow-left"
         /></button-icon>
@@ -9,8 +18,16 @@
           ><svg-icon icon-class="arrow-right"
         /></button-icon> -->
       </div>
-      <div class="navigation-links">
-        <router-link to="/" :class="{ active: $route.name === 'home' }"
+      <div
+        class="navigation-links"
+        :class="{ 'mobile-open': isMobileMenuOpen }"
+      >
+        <button class="drawer-close" type="button" @click="toggleMobileMenu">
+          ×
+        </button>
+        <router-link
+          to="/"
+          :class="{ active: $route.name === 'home' }"
           >哈基米视频</router-link
         >
         <!-- <router-link
@@ -29,6 +46,24 @@
           :class="{ active: $route.name === 'explore' }"
           >哈基米文化介绍</router-link
         >
+
+        <!-- <router-link
+          to="/explore"
+          :class="{ active: $route.name === 'explore' }"
+          >哈基米素材</router-link
+        > -->
+      </div>
+      <div class="mobile-menu-toggle" @click="toggleMobileMenu">
+        <svg-icon
+          style="
+            color: var(--color-text);
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            transition: 0.3s;
+          "
+          icon-class="menu"
+        />
       </div>
       <div class="right-part">
         <div class="search-box">
@@ -183,6 +218,7 @@ export default {
       langs: ['zh-CN', 'en'],
       currentLang: localStorage.getItem('lang'),
       keywords: '',
+      isMobileMenuOpen: false,
     };
   },
   computed: {
@@ -263,6 +299,9 @@ export default {
         this.$router.push({ name: 'login' });
       }
     },
+    toggleMobileMenu() {
+      this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    },
   },
 };
 </script>
@@ -320,10 +359,40 @@ nav.has-custom-titlebar {
   -webkit-app-region: no-drag;
 }
 
-.navigation-buttons {
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 111;
+}
+
+.logo-area {
   flex: 1;
   display: flex;
   align-items: center;
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    -webkit-app-region: no-drag;
+    img {
+      height: 42px;
+      width: 42px;
+      border-radius: 50%;
+    }
+    .svg-icon {
+      height: 32px;
+      width: 32px;
+    }
+    .logo-text {
+      margin-left: 8px;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+  }
   .svg-icon {
     height: 24px;
     width: 24px;
@@ -333,13 +402,13 @@ nav.has-custom-titlebar {
   }
 }
 @media (max-width: 970px) {
-  .navigation-buttons {
+  .logo-area {
     flex: unset;
   }
 }
 
 .navigation-links {
-  flex: 1;
+  flex: 2;
   display: flex;
   justify-content: center;
   text-transform: uppercase;
@@ -371,20 +440,84 @@ nav.has-custom-titlebar {
     color: var(--color-primary);
   }
 }
-
+.drawer-close {
+  display: none;
+}
 @media (max-width: 768px) {
+  .mobile-menu-toggle {
+    display: block !important;
+  }
   .navigation-links {
-    flex: 1 1 100%;
-    margin: 4px 0 0;
-    overflow-x: auto;
+    box-sizing: border-box;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 50vw;
+    max-width: 320px;
+    height: 100vh;
+    background: var(--color-body-bg);
+    box-shadow: -4px 0 16px rgba(0, 0, 0, 0.18);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-transform: none;
+    transform: translateX(100%);
+    transition: transform 0.25s ease-out;
+    z-index: 120;
     justify-content: flex-start;
+    border-radius: 24px 0 0 24px;
+
+    .drawer-close {
+      display: block;
+      align-self: flex-end;
+      background: transparent;
+      border: none;
+      color: var(--color-text);
+      font-size: 36px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      -webkit-app-region: no-drag;
+    }
+
     a {
-      font-size: 15px;
-      margin: {
-        right: 6px;
-        left: 6px;
+      -webkit-app-region: no-drag;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: var(--color-text);
+      transition: 0.2s;
+      text-align: left;
+      margin-bottom: 8px;
+
+      &:hover {
+        background: var(--color-secondary-bg-for-transparent);
       }
-      padding: 4px 8px;
+    }
+
+    a.active {
+      color: var(--color-primary);
+    }
+  }
+
+  .navigation-links.mobile-open {
+    transform: translateX(0); // 抽屉滑入
+  }
+
+  .right-part {
+    flex: 1 1 100%;
+    justify-content: flex-start;
+    margin-top: 8px;
+
+    .search-box {
+      width: 100%;
+
+      .container {
+        width: 100%;
+        max-width: none;
+      }
     }
   }
 }
@@ -452,6 +585,26 @@ nav.has-custom-titlebar {
       .svg-icon {
         color: var(--color-text);
       }
+    }
+  }
+}
+
+.mobile-menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    background: var(--color-text);
+    border-radius: 1px;
+    transition: 0.2s;
+    &:not(:last-child) {
+      margin-bottom: 4px;
     }
   }
 }
