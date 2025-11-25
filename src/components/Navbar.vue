@@ -1,14 +1,14 @@
 <template>
   <div>
     <nav :class="{ 'has-custom-titlebar': hasCustomTitlebar }">
-      <!-- <div class="navigation-buttons">
-        <button-icon @click.native="go('back')"
+      <div class="navigation-buttons">
+        <!-- <button-icon @click.native="go('back')"
           ><svg-icon icon-class="arrow-left"
         /></button-icon>
         <button-icon @click.native="go('forward')"
           ><svg-icon icon-class="arrow-right"
-        /></button-icon>
-      </div> -->
+        /></button-icon> -->
+      </div>
       <div class="navigation-links">
         <router-link to="/" :class="{ active: $route.name === 'home' }"
           >哈基米视频</router-link
