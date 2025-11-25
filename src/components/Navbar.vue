@@ -60,7 +60,7 @@
             icon-class="tuite"
           />
         </div>
-        <div class="hoverBtn" @click="toOpen('http://t.me/hajimi_bnb')">
+        <div class="hoverBtn" @click="toOpen('https://t.me/BNB_Hajimiiii')">
           <svg-icon
             style="
               color: var(--color-text);
@@ -71,6 +71,19 @@
               transition: 0.3s;
             "
             icon-class="telegram"
+          />
+        </div>
+        <div class="hoverBtn" @click="toOpen('https://gmgn.ai/bsc/token/0x82ec31d69b3c289e541b50e30681fd1acad24444')">
+          <svg-icon
+            style="
+              color: var(--color-text);
+              width: 24px;
+              height: 24px;
+              margin-left: 24px;
+              cursor: pointer;
+              transition: 0.3s;
+            "
+            icon-class="logo_small2"
           />
         </div>
 
