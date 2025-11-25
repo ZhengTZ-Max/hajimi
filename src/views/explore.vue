@@ -177,22 +177,32 @@
       </p>
     </div>
 
-    <VideoModal
-      :visible="showPlayer"
-      :src="currentVideoUrl"
-      :title="findRow?.label"
-      @close="closePlayer"
-    />
+    <div v-if="showPlayer" class="video-modal">
+      <div class="video-backdrop" @click="closePlayer"></div>
+      <div class="video-dialog">
+        <div class="video-header">
+          <span class="video-title">{{ findRow?.label }}</span>
+          <button class="video-close" type="button" @click="closePlayer">
+            ×
+          </button>
+        </div>
+        <div class="video">
+          <iframe
+            :src="currentVideoUrl"
+            frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowfullscreen
+            style="width: 100%; height: 480px; border: 0"
+          ></iframe>
+        </div>
+      </div>
+    </div>
   </section>
 </template>
 
 <script>
-import VideoModal from '@/components/VideoModal.vue';
 export default {
   name: 'Explore',
-  components: {
-    VideoModal,
-  },
   data() {
     return {
       showPlayer: false,
@@ -203,28 +213,28 @@ export default {
         {
           label: '《哈基米编年史》 第一集',
           desc: '初期解构',
-          videoUrl: '/video/1.mp4',
+          videoUrl: `https://player.bilibili.com/player.html?bvid=BV1fMJgzxEvN&autoplay=1&page=1`,
           cover:
             'https://i0.hdslb.com/bfs/archive/1a0fc5a3fa155a52ed412ecdcfda6c2fcac3eded.jpg@672w_378h_1c.avif',
         },
         {
           label: '《哈基米编年史》 第二集',
           desc: '萌宠解构',
-          videoUrl: '/video/2.mp4',
+          videoUrl: `https://player.bilibili.com/player.html?bvid=BV15iJuzEE6H&autoplay=1&page=1`,
           cover:
             'https://i0.hdslb.com/bfs/archive/18ae55000ae595186985c558b3170c1b37172fe8.jpg@672w_378h_1c.avif',
         },
         {
           label: '《哈基米编年史》 第三集',
           desc: '音符与猫咪解构',
-          videoUrl: '/video/3.mp4',
+          videoUrl: `https://player.bilibili.com/player.html?bvid=BV1Qi7LzRE1q&autoplay=1&page=1`,
           cover:
             'https://i0.hdslb.com/bfs/archive/628e3f5bd5eff412fd33a4e02ef8cf9d61ac908d.jpg@672w_378h_1c.avif',
         },
         {
           label: '《哈基米编年史》第四集',
           desc: '一杯水，一只猫，一个时代，即是万物。',
-          videoUrl: '/video/4.mp4',
+          videoUrl: `https://player.bilibili.com/player.html?bvid=BV1QRpVzaEpF&autoplay=1&page=1`,
           cover:
             'https://i0.hdslb.com/bfs/archive/dafec852a872a2213569af3107b7d431192d1008.jpg@672w_378h_1c.avif',
         },
@@ -470,17 +480,29 @@ export default {
   background: #000;
 }
 
+.video-header {
+  padding: 12px 12px 8px 16px;
+  color: #000;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--color-secondary-bg);
+
+}
+
+.video-title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
 .video-close {
-  position: absolute;
-  top: 8px;
-  right: 8px;
   z-index: 2;
   border: none;
-  background: rgba(0, 0, 0, 0.5);
-  color: #fff;
-  border-radius: 50%;
-  width: 28px;
-  height: 28px;
+  font-size: 36px;
   cursor: pointer;
 }
 
