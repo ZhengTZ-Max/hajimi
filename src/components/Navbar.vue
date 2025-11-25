@@ -73,7 +73,14 @@
             icon-class="telegram"
           />
         </div>
-        <div class="hoverBtn" @click="toOpen('https://gmgn.ai/bsc/token/0x82ec31d69b3c289e541b50e30681fd1acad24444')">
+        <div
+          class="hoverBtn"
+          @click="
+            toOpen(
+              'https://gmgn.ai/bsc/token/0x82ec31d69b3c289e541b50e30681fd1acad24444'
+            )
+          "
+        >
           <svg-icon
             style="
               color: var(--color-text);
