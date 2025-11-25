@@ -73,6 +73,7 @@
             icon-class="telegram"
           />
         </div>
+
         <div
           class="hoverBtn"
           @click="
@@ -91,6 +92,36 @@
               transition: 0.3s;
             "
             icon-class="logo_small2"
+          />
+        </div>
+
+        <div
+          class="hoverBtn"
+          @click="
+            toOpen(
+              'https://pancakeswap.finance/swap?outputCurrency=0x82Ec31D69b3c289E541b50E30681FD1ACAd24444'
+            )
+          "
+        >
+          <!-- <span
+            style="
+              margin-left: 24px;
+              color: var(--color-primary);
+              font-weight: bold;
+              cursor: pointer;
+            "
+            >Swap</span
+          > -->
+          <svg-icon
+            style="
+              color: var(--color-text);
+              width: 24px;
+              height: 24px;
+              margin-left: 24px;
+              cursor: pointer;
+              transition: 0.3s;
+            "
+            icon-class="panswap"
           />
         </div>
 
