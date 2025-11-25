@@ -489,7 +489,6 @@ export default {
   align-items: center;
   justify-content: space-between;
   background-color: var(--color-secondary-bg);
-
 }
 
 .video-title {
