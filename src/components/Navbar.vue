@@ -25,9 +25,7 @@
         <button class="drawer-close" type="button" @click="toggleMobileMenu">
           ×
         </button>
-        <router-link
-          to="/"
-          :class="{ active: $route.name === 'home' }"
+        <router-link to="/" :class="{ active: $route.name === 'home' }"
           >哈基米视频</router-link
         >
         <!-- <router-link
