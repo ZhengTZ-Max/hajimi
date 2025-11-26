@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import { isLooseLoggedIn, isAccountLoggedIn } from '@/utils/auth';
 
 Vue.use(VueRouter);
 const routes = [
@@ -12,21 +11,6 @@ const routes = [
       keepAlive: true,
       savePosition: true,
     },
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('@/views/login.vue'),
-  },
-  {
-    path: '/login/username',
-    name: 'loginUsername',
-    component: () => import('@/views/loginUsername.vue'),
-  },
-  {
-    path: '/login/account',
-    name: 'loginAccount',
-    component: () => import('@/views/loginAccount.vue'),
   },
   {
     path: '/playlist/:id',
@@ -136,6 +120,11 @@ const routes = [
     path: '/bvid',
     name: 'bvid',
     component: () => import('@/views/getBilll.vue'),
+  },
+  {
+    path: '/material',
+    name: 'material',
+    component: () => import('@/views/material.vue'),
   },
 ];
 

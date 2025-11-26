@@ -2,6 +2,7 @@ import { isAccountLoggedIn } from './auth';
 import { refreshCookie } from '@/api/auth';
 import dayjs from 'dayjs';
 import store from '@/store';
+import { list } from '@vercel/blob';
 
 export function isTrackPlayable(track) {
   let result = {
@@ -218,3 +219,19 @@ export function formatTrackTime(value) {
   let sec = (~~(value % 60)).toString().padStart(2, '0');
   return `${min}:${sec}`;
 }
+
+export function getBlobUrl(file) {
+  return `https://yrljidguz14hggfy.public.blob.vercel-storage.com/${file}`;
+}
+export async function getFolderContents(folderPath) {
+  // 确保 folderPath 以 '/' 结尾，避免匹配到其他前缀
+  const prefix = folderPath.endsWith('/') ? folderPath : folderPath + '/';
+
+  const { blobs } = await list({
+    prefix, // 相当于“文件夹”
+    token: 'vercel_blob_rw_yRljidGuz14HGgfy_ZjbdnUurMiienVAC5nvl6Z5PyufzAC', // 如果在服务端且需要认证
+  });
+
+  return blobs;
+}
+

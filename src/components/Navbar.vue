@@ -45,11 +45,11 @@
           >哈基米文化介绍</router-link
         >
 
-        <!-- <router-link
-          to="/explore"
-          :class="{ active: $route.name === 'explore' }"
+        <router-link
+          to="/material"
+          :class="{ active: $route.name === 'material' }"
           >哈基米素材</router-link
-        > -->
+        >
       </div>
       <div class="mobile-menu-toggle" @click="toggleMobileMenu">
         <svg-icon
