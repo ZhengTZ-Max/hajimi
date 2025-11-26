@@ -42,8 +42,7 @@
 </template>
 
 <script>
-import { getBlobUrl, getFolderContents } from '@/utils/common';
-console.log(getFolderContents('/material/gif'));
+import { getBlobUrl } from '@/utils/common';
 export default {
   name: 'material',
   data() {
@@ -69,13 +68,39 @@ export default {
     };
   },
   created() {
-    const count = 24;
-    this.list = Array.from({ length: count }, (v, i) => ({
-      src: getBlobUrl(`material/gif/${i + 1}.gif`),
-      id: i,
-    }));
+    // 优先通过自己的 API 动态获取 Blob 列表，失败时回退到固定数量
+    this.fetchMaterialList();
   },
   methods: {
+    async fetchMaterialList() {
+      try {
+        const folderPath = '/material/gif';
+        const response = await fetch(
+          `/vapi/blob-list?prefix=${encodeURIComponent(folderPath)}`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error(data.error || 'blob-list api error');
+        }
+        const blobs = data.blobs || [];
+        // Vercel Blob 的每个 blob 通常包含 url / pathname 等字段
+        this.list = blobs.map((b, index) => ({
+          src: b.url || getBlobUrl(b.pathname || ''),
+          id: index,
+        }));
+      } catch (error) {
+        console.error('Failed to fetch folder contents, use fallback list:', error);
+        // 回退到本地固定数量
+        const count = 24;
+        this.list = Array.from({ length: count }, (v, i) => ({
+          src: getBlobUrl(`material/gif/${i + 1}.gif`),
+          id: i,
+        }));
+      }
+    },
     openImage(item) {
       this.currentImage = item;
       this.showViewer = true;
