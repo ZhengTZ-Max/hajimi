@@ -42,8 +42,8 @@
 </template>
 
 <script>
-import { getBlobUrl,getFolderContents } from '@/utils/common';
-console.log(getFolderContents('/material/gif'))
+import { getBlobUrl, getFolderContents } from '@/utils/common';
+console.log(getFolderContents('/material/gif'));
 export default {
   name: 'material',
   data() {

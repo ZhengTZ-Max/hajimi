@@ -234,4 +234,3 @@ export async function getFolderContents(folderPath) {
 
   return blobs;
 }
-

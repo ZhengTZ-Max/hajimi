@@ -9,7 +9,7 @@ import '@/utils/filters';
 // import './registerServiceWorker';
 import translate from 'i18n-jsautotranslate';
 import { dailyTask } from '@/utils/common';
-import VueMasonry from 'vue-masonry-css'
+import VueMasonry from 'vue-masonry-css';
 import '@/assets/css/global.scss';
 import NProgress from 'nprogress';
 import '@/assets/css/nprogress.css';
