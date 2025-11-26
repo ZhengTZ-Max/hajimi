@@ -92,7 +92,10 @@ export default {
           id: index,
         }));
       } catch (error) {
-        console.error('Failed to fetch folder contents, use fallback list:', error);
+        console.error(
+          'Failed to fetch folder contents, use fallback list:',
+          error
+        );
         // 回退到本地固定数量
         const count = 24;
         this.list = Array.from({ length: count }, (v, i) => ({
