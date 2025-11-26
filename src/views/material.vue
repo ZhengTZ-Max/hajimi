@@ -76,7 +76,7 @@ export default {
       try {
         const folderPath = '/material/gif';
         const response = await fetch(
-          `/vapi/blob-list?prefix=${encodeURIComponent(folderPath)}`
+          `/api/blob-list?prefix=${encodeURIComponent(folderPath)}`
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
