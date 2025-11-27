@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import { artistMv, getArtist } from '@/api/artist';
+import { artistMv } from '@/api/artist';
 import NProgress from 'nprogress';
 
 import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
@@ -62,9 +62,7 @@ export default {
       setTimeout(() => {
         if (!this.show) NProgress.start();
       }, 1000);
-      getArtist(this.id).then(data => {
-        this.artist = data.artist;
-      });
+   
       this.loadMVs();
     },
     loadMVs() {
