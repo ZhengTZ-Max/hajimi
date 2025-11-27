@@ -13,9 +13,9 @@
       <router-view v-if="!$route.meta.keepAlive"></router-view>
       <div class="footer">
         <p class="author"
-          >MADE BY
-          <a href="https://t.me/hajimi_bnb" target="_blank"
-            >哈基米官方频道</a
+          >制作者
+          <a href="https://x.com/zerozero_e" target="_blank"
+            >哈基排骨 | 红烧排骨</a
           ></p
         >
         <p class="version">v0.0.2</p>
