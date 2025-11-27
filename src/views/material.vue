@@ -43,7 +43,6 @@
 
 <script>
 import { getBlobUrl, getFolderContents } from '@/utils/common';
-console.log(getFolderContents('material/gif'));
 console.log(process.env);
 export default {
   name: 'material',
@@ -70,6 +69,9 @@ export default {
     };
   },
   created() {
+    getFolderContents('material/gif').then(res => {
+      console.log(res);
+    });
     const count = 24;
     this.list = Array.from({ length: count }, (v, i) => ({
       src: getBlobUrl(`material/gif/${i + 1}.gif`),
