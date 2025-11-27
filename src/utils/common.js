@@ -228,10 +228,14 @@ export async function getFolderContents(folderPath) {
   const prefix = folderPath.endsWith('/') ? folderPath : folderPath + '/';
 
   // 从环境变量获取 token，Vue CLI 中环境变量需要以 VUE_APP_ 开头
-  const token = process.env.VUE_APP_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN;
+  const token =
+    process.env.VUE_APP_BLOB_READ_WRITE_TOKEN ||
+    process.env.BLOB_READ_WRITE_TOKEN;
 
   if (!token) {
-    console.warn('Vercel Blob: No token found. Please configure VUE_APP_BLOB_READ_WRITE_TOKEN or BLOB_READ_WRITE_TOKEN environment variable.');
+    console.warn(
+      'Vercel Blob: No token found. Please configure VUE_APP_BLOB_READ_WRITE_TOKEN or BLOB_READ_WRITE_TOKEN environment variable.'
+    );
     return [];
   }
 
