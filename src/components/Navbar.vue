@@ -25,7 +25,10 @@
         <button class="drawer-close" type="button" @click="toggleMobileMenu">
           ×
         </button>
-        <router-link to="/" :class="{ active: $route.name === 'home' }"
+        <router-link
+          to="/"
+          :class="{ active: $route.name === 'home' }"
+          @click.native="closeMobileMenu"
           >哈基米视频</router-link
         >
         <!-- <router-link
@@ -36,18 +39,21 @@
         <router-link
           to="/library"
           :class="{ active: $route.name === 'library' }"
+          @click.native="closeMobileMenu"
           >哈基米音乐</router-link
         >
 
         <router-link
           to="/explore"
           :class="{ active: $route.name === 'explore' }"
+          @click.native="closeMobileMenu"
           >哈基米文化介绍</router-link
         >
 
         <router-link
           to="/material"
           :class="{ active: $route.name === 'material' }"
+          @click.native="closeMobileMenu"
           >哈基米素材</router-link
         >
       </div>
@@ -285,6 +291,11 @@ export default {
     },
     toggleMobileMenu() {
       this.isMobileMenuOpen = !this.isMobileMenuOpen;
+    },
+    closeMobileMenu() {
+      if (this.isMobileMenuOpen) {
+        this.isMobileMenuOpen = false;
+      }
     },
   },
 };
