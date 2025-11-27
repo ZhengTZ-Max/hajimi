@@ -274,7 +274,7 @@ export default {
       }, 1000);
       this.show = false;
       this.$parent.$refs.main.scrollTo({ top: 0 });
-   
+
       getArtistAlbum({ id: id, limit: 200 }).then(data => {
         this.albumsData = data.hotAlbums;
         this.latestRelease = data.hotAlbums[0];
