@@ -3,7 +3,7 @@ import axios from 'axios';
 
 let baseURL = '/api';
 // Web 和 Electron 跑在不同端口避免同时启动时冲突
-// baseURL = process.env.VUE_APP_API_URL;
+baseURL = process.env.VUE_APP_API_URL;
 
 const service = axios.create({
   baseURL,
