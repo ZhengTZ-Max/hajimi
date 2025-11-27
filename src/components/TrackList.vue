@@ -235,7 +235,6 @@ export default {
       this.likeATrack(this.rightClickedTrack.id);
     },
 
-
     copyLink() {
       this.$copyText(
         `https://music.163.com/song?id=${this.rightClickedTrack.id}`

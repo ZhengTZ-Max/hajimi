@@ -63,12 +63,7 @@ export default {
     };
   },
   computed: {
-    ...mapState([
-      'showLyrics',
-      'player',
-      'enableScrolling',
-      'playerBar',
-    ]),
+    ...mapState(['showLyrics', 'player', 'enableScrolling', 'playerBar']),
     showPlayer() {
       return (
         [
@@ -100,9 +95,7 @@ export default {
         this.player.playOrPause();
       }
     },
-    fetchData() {
- 
-    },
+    fetchData() {},
     handleScroll() {
       this.$refs.scrollbar.handleScroll();
     },

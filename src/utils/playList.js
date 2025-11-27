@@ -26,8 +26,6 @@ export function getListSourcePath() {
   }
 }
 
-
-
 async function replaceRecommendResult(recommend) {
   for (let r of recommend) {
     if (specialPlaylist.indexOf(r.id) > -1) {

@@ -293,7 +293,6 @@ export default {
     },
     setPopularTracks(hotSongs) {
       const trackIDs = hotSongs.map(t => t.id);
-
     },
     goToAlbum(id) {
       this.$router.push({

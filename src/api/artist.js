@@ -1,8 +1,6 @@
 import request from '@/utils/request';
 import { mapTrackPlayableStatus } from '@/utils/common';
 
-
-
 /**
  * 获取歌手专辑
  * 说明 : 调用此接口 , 传入歌手 id, 可获得歌手专辑内容

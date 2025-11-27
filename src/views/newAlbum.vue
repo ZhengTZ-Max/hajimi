@@ -28,9 +28,7 @@ export default {
       albums: [],
     };
   },
-  created() {
-
-  },
+  created() {},
 };
 </script>
 

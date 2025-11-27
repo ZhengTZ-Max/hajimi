@@ -98,8 +98,6 @@ export default {
 
       // 获取已经加载了的歌曲
       let loadedTrackIDs = this.tracks.map(t => t.id);
-
-   
     },
   },
 };

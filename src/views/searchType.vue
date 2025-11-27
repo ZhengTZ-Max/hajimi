@@ -128,7 +128,6 @@ export default {
     getTracksDetail() {
       const trackIDs = this.result.map(t => t.id);
       if (trackIDs.length === 0) return;
-   
     },
   },
 };

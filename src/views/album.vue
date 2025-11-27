@@ -254,8 +254,6 @@ export default {
       setTimeout(() => {
         if (!this.show) NProgress.start();
       }, 1000);
-
-  
     },
     toggleFullDescription() {
       this.showFullDescription = !this.showFullDescription;

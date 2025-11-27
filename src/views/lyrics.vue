@@ -509,7 +509,6 @@ export default {
       }
     },
     addToPlaylist() {
-
       this.$store.dispatch('fetchLikedPlaylist');
       this.updateModal({
         modalName: 'addTrackToPlaylistModal',
