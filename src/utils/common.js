@@ -1,43 +1,6 @@
-import { isAccountLoggedIn } from './auth';
-import { refreshCookie } from '@/api/auth';
 import dayjs from 'dayjs';
 import store from '@/store';
 import { list } from '@vercel/blob';
-
-export function isTrackPlayable(track) {
-  let result = {
-    playable: true,
-    reason: '',
-  };
-  if (track?.privilege?.pl > 0) {
-    return result;
-  }
-  // cloud storage judgement logic
-  if (isAccountLoggedIn() && track?.privilege?.cs) {
-    return result;
-  }
-  if (track.fee === 1 || track.privilege?.fee === 1) {
-    if (isAccountLoggedIn() && store.state.data.user.vipType === 11) {
-      result.playable = true;
-    } else {
-      result.playable = false;
-      result.reason = 'VIP Only';
-    }
-  } else if (track.fee === 4 || track.privilege?.fee === 4) {
-    result.playable = false;
-    result.reason = '付费专辑';
-  } else if (
-    track.noCopyrightRcmd !== null &&
-    track.noCopyrightRcmd !== undefined
-  ) {
-    result.playable = false;
-    result.reason = '无版权';
-  } else if (track.privilege?.st < 0 && isAccountLoggedIn()) {
-    result.playable = false;
-    result.reason = '已下架';
-  }
-  return result;
-}
 
 export function mapTrackPlayableStatus(tracks, privileges = []) {
   if (tracks?.length === undefined) return tracks;
@@ -94,23 +57,6 @@ export function throttle(fn, time) {
 export function updateHttps(url) {
   if (!url) return '';
   return url.replace(/^http:/, 'https:');
-}
-
-export function dailyTask() {
-  let lastDate = store.state.data.lastRefreshCookieDate;
-  if (
-    isAccountLoggedIn() &&
-    (lastDate === undefined || lastDate !== dayjs().date())
-  ) {
-    console.debug('[debug][common.js] execute dailyTask');
-    refreshCookie().then(() => {
-      console.debug('[debug][common.js] 刷新cookie');
-      store.commit('updateData', {
-        key: 'lastRefreshCookieDate',
-        value: dayjs().date(),
-      });
-    });
-  }
 }
 
 export function changeAppearance(appearance) {

@@ -5,7 +5,6 @@ import {
   dailyRecommendPlaylist,
   getPlaylistDetail,
 } from '@/api/playlist';
-import { isAccountLoggedIn } from '@/utils/auth';
 
 export function hasListSource() {
   return !state.player.isPersonalFM && state.player.playlistSource.id !== 0;
@@ -27,23 +26,7 @@ export function getListSourcePath() {
   }
 }
 
-export async function getRecommendPlayList(limit, removePrivateRecommand) {
-  if (isAccountLoggedIn()) {
-    const playlists = await Promise.all([
-      dailyRecommendPlaylist(),
-      recommendPlaylist({ limit }),
-    ]);
-    let recommend = playlists[0].recommend ?? [];
-    if (recommend.length) {
-      if (removePrivateRecommand) recommend = recommend.slice(1);
-      await replaceRecommendResult(recommend);
-    }
-    return recommend.concat(playlists[1].result).slice(0, limit);
-  } else {
-    const response = await recommendPlaylist({ limit });
-    return response.result;
-  }
-}
+
 
 async function replaceRecommendResult(recommend) {
   for (let r of recommend) {

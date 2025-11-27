@@ -194,7 +194,6 @@
 
 <script>
 import { mapState } from 'vuex';
-import { isLooseLoggedIn, doLogout } from '@/utils/auth';
 
 // import icons for win32 title bar
 // icons by https://github.com/microsoft/vscode-codicons
@@ -221,14 +220,7 @@ export default {
   },
   computed: {
     ...mapState(['settings', 'data']),
-    isLooseLoggedIn() {
-      return isLooseLoggedIn();
-    },
-    avatarUrl() {
-      return this.data?.user?.avatarUrl && this.isLooseLoggedIn
-        ? `${this.data?.user?.avatarUrl}?param=512y512`
-        : 'http://s4.music.126.net/style/web2/img/default/default_avatar.jpg?param=60y60';
-    },
+
     hasCustomTitlebar() {
       return false;
     },
@@ -251,12 +243,6 @@ export default {
         name: 'search',
         params: { keywords: this.keywords },
       });
-    },
-
-    logout() {
-      if (!confirm('确定要退出登录吗？')) return;
-      doLogout();
-      this.$router.push({ name: 'home' });
     },
 
     async toggleLang() {

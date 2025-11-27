@@ -8,7 +8,6 @@ import '@/assets/icons';
 import '@/utils/filters';
 // import './registerServiceWorker';
 import translate from 'i18n-jsautotranslate';
-import { dailyTask } from '@/utils/common';
 import VueMasonry from 'vue-masonry-css';
 import '@/assets/css/global.scss';
 import NProgress from 'nprogress';
@@ -74,7 +73,6 @@ Vue.use(
 Vue.config.productionTip = false;
 
 NProgress.configure({ showSpinner: false, trickleSpeed: 100 });
-dailyTask();
 initLang();
 
 new Vue({

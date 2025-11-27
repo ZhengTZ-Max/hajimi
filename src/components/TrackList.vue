@@ -78,7 +78,6 @@
 import { mapActions, mapMutations, mapState } from 'vuex';
 import { addOrRemoveTrackFromPlaylist } from '@/api/playlist';
 import { cloudDiskTrackDelete } from '@/api/user';
-import { isAccountLoggedIn } from '@/utils/auth';
 
 import TrackListItem from '@/components/TrackListItem.vue';
 import ContextMenu from '@/components/ContextMenu.vue';
@@ -235,43 +234,8 @@ export default {
     like() {
       this.likeATrack(this.rightClickedTrack.id);
     },
-    addTrackToPlaylist() {
-      if (!isAccountLoggedIn()) {
-        this.showToast(locale.t('toast.needToLogin'));
-        return;
-      }
-      this.updateModal({
-        modalName: 'addTrackToPlaylistModal',
-        key: 'show',
-        value: true,
-      });
-      this.updateModal({
-        modalName: 'addTrackToPlaylistModal',
-        key: 'selectedTrackID',
-        value: this.rightClickedTrack.id,
-      });
-    },
-    removeTrackFromPlaylist() {
-      if (!isAccountLoggedIn()) {
-        this.showToast(locale.t('toast.needToLogin'));
-        return;
-      }
-      if (confirm(`确定要从歌单删除 ${this.rightClickedTrack.name}？`)) {
-        let trackID = this.rightClickedTrack.id;
-        addOrRemoveTrackFromPlaylist({
-          op: 'del',
-          pid: this.id,
-          tracks: trackID,
-        }).then(data => {
-          this.showToast(
-            data.body.code === 200
-              ? locale.t('toast.removedFromPlaylist')
-              : data.body.message
-          );
-          this.$parent.removeTrack(trackID);
-        });
-      }
-    },
+
+
     copyLink() {
       this.$copyText(
         `https://music.163.com/song?id=${this.rightClickedTrack.id}`

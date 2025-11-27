@@ -1,32 +1,7 @@
 import request from '@/utils/request';
 import { mapTrackPlayableStatus } from '@/utils/common';
-import { isAccountLoggedIn } from '@/utils/auth';
-import { getTrackDetail } from '@/api/track';
 
-/**
- * 获取歌手单曲
- * 说明 : 调用此接口 , 传入歌手 id, 可获得歌手部分信息和热门歌曲
- * @param {number} id - 歌手 id, 可由搜索接口获得
- */
-export function getArtist(id) {
-  return request({
-    url: '/artists',
-    method: 'get',
-    params: {
-      id,
-      timestamp: new Date().getTime(),
-    },
-  }).then(async data => {
-    if (!isAccountLoggedIn()) {
-      const trackIDs = data.hotSongs.map(t => t.id);
-      const tracks = await getTrackDetail(trackIDs.join(','));
-      data.hotSongs = tracks.songs;
-      return data;
-    }
-    data.hotSongs = mapTrackPlayableStatus(data.hotSongs);
-    return data;
-  });
-}
+
 
 /**
  * 获取歌手专辑

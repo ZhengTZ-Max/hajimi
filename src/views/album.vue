@@ -147,12 +147,9 @@
 <script>
 import { mapMutations, mapActions, mapState } from 'vuex';
 import { getArtistAlbum } from '@/api/artist';
-import { getTrackDetail } from '@/api/track';
-import { getAlbum, albumDynamicDetail, likeAAlbum } from '@/api/album';
 import locale from '@/locale';
 import { splitSoundtrackAlbumTitle, splitAlbumTitle } from '@/utils/common';
 import NProgress from 'nprogress';
-import { isAccountLoggedIn } from '@/utils/auth';
 import { groupBy, toPairs, sortBy } from 'lodash';
 
 import ExplicitSymbol from '@/components/ExplicitSymbol.vue';
@@ -239,28 +236,7 @@ export default {
     playAlbumByID(id, trackID = 'first') {
       this.$store.state.player.playAlbumByID(id, trackID);
     },
-    likeAlbum(toast = false) {
-      if (!isAccountLoggedIn()) {
-        this.showToast(locale.t('toast.needToLogin'));
-        return;
-      }
-      likeAAlbum({
-        id: this.album.id,
-        t: this.dynamicDetail.isSub ? 0 : 1,
-      })
-        .then(data => {
-          if (data.code === 200) {
-            this.dynamicDetail.isSub = !this.dynamicDetail.isSub;
-            if (toast === true)
-              this.showToast(
-                this.dynamicDetail.isSub ? '已保存到音乐库' : '已从音乐库删除'
-              );
-          }
-        })
-        .catch(error => {
-          this.showToast(`${error.response.data.message || error}`);
-        });
-    },
+
     formatTitle() {
       let splitTitle = splitSoundtrackAlbumTitle(this.album.name);
       let splitTitle2 = splitAlbumTitle(splitTitle.title);
@@ -278,27 +254,8 @@ export default {
       setTimeout(() => {
         if (!this.show) NProgress.start();
       }, 1000);
-      getAlbum(id).then(data => {
-        this.album = data.album;
-        this.tracks = data.songs;
-        this.formatTitle();
-        NProgress.done();
-        this.show = true;
 
-        // to get explicit mark
-        let trackIDs = this.tracks.map(t => t.id);
-        getTrackDetail(trackIDs.join(',')).then(data => {
-          this.tracks = data.songs;
-        });
-
-        // get more album by this artist
-        getArtistAlbum({ id: this.album.artist.id, limit: 100 }).then(data => {
-          this.moreAlbums = data.hotAlbums;
-        });
-      });
-      albumDynamicDetail(id).then(data => {
-        this.dynamicDetail = data;
-      });
+  
     },
     toggleFullDescription() {
       this.showFullDescription = !this.showFullDescription;

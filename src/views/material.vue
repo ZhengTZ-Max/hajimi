@@ -3,6 +3,7 @@
     <div class="view-switch">
       <div
         v-for="item in tabs"
+        :key="item?.value"
         class="button hoverBtn"
         :class="{ active: item?.value == tabActive }"
         @click="tabActive = item?.value"
@@ -11,14 +12,47 @@
     </div>
 
     <div class="showCon">
+      <div v-if="loading" class="loading-placeholder">
+        <div id="loading">
+          <div id="loading-center">
+            <div id="loading-center-absolute">
+              <div class="object"></div>
+              <div class="object"></div>
+              <div class="object"></div>
+              <div class="object"></div>
+              <div class="object"></div>
+              <div class="object"></div>
+              <div class="object"></div>
+              <div class="object"></div>
+              <div class="object"></div>
+              <div class="object"></div>
+            </div>
+          </div>
+        </div>
+      </div>
       <masonry :cols="{ default: 6, 1200: 5, 700: 3, 400: 2 }" :gutter="20">
         <div
-          v-for="(item, index) in list"
-          :key="index"
+          v-for="item in filterList()"
+          :key="item?.pathname"
           class="card"
-          @click="openImage(item)"
+          @click="openAsset(item)"
         >
-          <img :src="item?.src" />
+          <video
+            v-if="item?.assetType === 'video'"
+            :src="item?.url"
+            class="card-video"
+            muted
+            loop
+            playsinline
+          ></video>
+          <img
+            v-else
+            :src="item?.url"
+            :class="{ 'is-gif': item?.assetType === 'gif' }"
+          />
+          <div v-if="item?.assetType !== 'image'" class="media-badge">
+            {{ item?.assetType === 'gif' ? 'GIF' : '视频' }}
+          </div>
         </div>
       </masonry>
     </div>
@@ -27,9 +61,18 @@
     <div v-if="showViewer" class="img-viewer-overlay">
       <div class="img-viewer-mask" @click="closeViewer"></div>
       <div class="img-viewer-dialog">
-        <img :src="currentImage?.src" class="img-viewer-img" />
+        <video
+          v-if="currentAsset?.assetType === 'video'"
+          :src="currentAsset?.url"
+          controls
+          autoplay
+          loop
+          playsinline
+          class="viewer-video"
+        ></video>
+        <img v-else :src="currentAsset?.url" class="img-viewer-img" />
         <div class="img-viewer-actions">
-          <button type="button" class="btn" @click="downloadImage">
+          <button type="button" class="btn" @click="downloadAsset">
             下载到本地
           </button>
           <button type="button" class="btn btn-close" @click="closeViewer">
@@ -42,60 +85,103 @@
 </template>
 
 <script>
-import { getBlobUrl, getFolderContents } from '@/utils/common';
-console.log(process.env);
+import { getBlobFiles } from '@/api/vercel';
 export default {
   name: 'material',
   data() {
     return {
-      tabActive: 'photo',
+      loading: false,
+      tabActive: 'all',
       tabs: [
+        {
+          label: '全部',
+          value: 'all',
+        },
         {
           label: '图片',
           value: 'photo',
         },
-        // {
-        //   label: '视频',
-        //   value: 'video',
-        // },
+        {
+          label: '视频',
+          value: 'video',
+        },
         // {
         //   label: '文字',
         //   value: 'txt',
         // },
       ],
       list: [],
+      originList: [],
       showViewer: false,
-      currentImage: null,
+      currentAsset: null,
     };
   },
   created() {
-    getFolderContents('material/gif').then(res => {
-      console.log(res);
-    });
-    const count = 24;
-    this.list = Array.from({ length: count }, (v, i) => ({
-      src: getBlobUrl(`material/gif/${i + 1}.gif`),
-      id: i,
-    }));
+    this.getList();
   },
   methods: {
-    openImage(item) {
-      this.currentImage = item;
+    filterList() {
+      if (this.tabActive == 'all') {
+        return this.originList;
+      } else if (this.tabActive == 'photo') {
+        return this.originList?.filter(e =>
+          ['gif', 'image']?.includes(e?.assetType)
+        );
+      } else if (this.tabActive == 'video') {
+        return this.originList?.filter(e => ['video']?.includes(e?.assetType));
+      }
+    },
+    getList() {
+      this.loading = true;
+      getBlobFiles('material')
+        .then(res => {
+          let newList = [];
+          const blobs = res?.blobs || [];
+          newList = blobs.map(item => ({
+            ...item,
+            assetType: this.detectAssetType(item),
+          }));
+
+          this.originList = newList?.filter(e => e?.size > 0);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    detectAssetType(item = {}) {
+      const pathname = String(item?.pathname || item?.name || '').toLowerCase();
+      const contentType = String(item?.contentType || '').toLowerCase();
+      if (
+        contentType.startsWith('video/') ||
+        /\.(mp4|mov|webm|mkv)$/.test(pathname)
+      ) {
+        return 'video';
+      }
+      if (contentType === 'image/gif' || pathname.endsWith('.gif')) {
+        return 'gif';
+      }
+      return 'image';
+    },
+    openAsset(item) {
+      this.currentAsset = item;
       this.showViewer = true;
     },
     closeViewer() {
       this.showViewer = false;
-      this.currentImage = null;
+      this.currentAsset = null;
     },
-    async downloadImage() {
-      if (!this.currentImage || !this.currentImage.src) return;
+    async downloadAsset() {
+      if (!this.currentAsset || !this.currentAsset.url) return;
       try {
-        const res = await fetch(this.currentImage.src, { mode: 'cors' });
+        const res = await fetch(this.currentAsset.url, { mode: 'cors' });
         const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `hajimi_${this.currentImage.id || ''}.gif`;
+        const filename = this.currentAsset.pathname
+          ? this.currentAsset.pathname.split('/').pop()
+          : 'material_asset';
+        a.download = filename || 'material_asset';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -124,7 +210,7 @@ export default {
 .explore-container {
   box-sizing: border-box;
   width: 100%;
-  padding: 24px;
+  padding: 36px 0;
 
   .view-switch {
     display: inline-flex;
@@ -166,22 +252,38 @@ export default {
     }
   }
   .showCon {
-    margin-top: 24px;
+    margin-top: 8px;
     padding: 24px;
 
     .card {
+      position: relative;
+      overflow: hidden;
       text-align: center;
       margin-bottom: 24px;
       cursor: pointer;
       transition: 0.3s;
       background-color: var(--color-secondary-bg);
+      border-radius: 10px;
+      video,
       img {
         width: 100%;
         display: block;
+        border-radius: 8px;
       }
       &:hover {
-        transform: scale(1.05);
+        transform: scale(1.1);
         border: 4px solid var(--color-primary);
+      }
+      .media-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 600;
+        background: rgba(0, 0, 0, 0.65);
+        color: #fff;
       }
     }
   }
@@ -223,9 +325,18 @@ export default {
 
 .img-viewer-img {
   flex: 1;
-  max-width: 80vw;
+  max-width: 100%;
   max-height: 70vh;
   border-radius: 12px;
+}
+
+.viewer-video {
+  flex: 1;
+  min-width: 65vw;
+  max-width: 100%;
+  max-height: 70vh;
+  border-radius: 12px;
+  background: #000;
 }
 
 .img-viewer-actions {

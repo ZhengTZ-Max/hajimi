@@ -44,7 +44,6 @@
 
 <script>
 import { mvDetail, mvUrl, simiMv, likeAMV } from '@/api/mv';
-import { isAccountLoggedIn } from '@/utils/auth';
 import NProgress from 'nprogress';
 import locale from '@/locale';
 import '@/assets/css/plyr.css';
@@ -129,10 +128,6 @@ export default {
       });
     },
     likeMV() {
-      if (!isAccountLoggedIn()) {
-        this.showToast(locale.t('toast.needToLogin'));
-        return;
-      }
       likeAMV({
         mvid: this.mv.data.id,
         t: this.mv.subed ? 0 : 1,

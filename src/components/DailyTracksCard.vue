@@ -21,7 +21,6 @@
 import locale from '@/locale';
 import { mapMutations, mapState, mapActions } from 'vuex';
 import { dailyRecommendTracks } from '@/api/playlist';
-import { isAccountLoggedIn } from '@/utils/auth';
 import sample from 'lodash/sample';
 
 const defaultCovers = [
@@ -49,29 +48,9 @@ export default {
   methods: {
     ...mapActions(['showToast']),
     ...mapMutations(['updateDailyTracks']),
-    loadDailyTracks() {
-      if (!isAccountLoggedIn()) return;
-      dailyRecommendTracks()
-        .then(result => {
-          this.updateDailyTracks(result.data.dailySongs);
-        })
-        .catch(() => {});
-    },
+
     goToDailyTracks() {
       this.$router.push({ name: 'dailySongs' });
-    },
-    playDailyTracks() {
-      if (!isAccountLoggedIn()) {
-        this.showToast(locale.t('toast.needToLogin'));
-        return;
-      }
-      let trackIDs = this.dailyTracks.map(t => t.id);
-      this.$store.state.player.replacePlaylist(
-        trackIDs,
-        '/daily/songs',
-        'url',
-        this.dailyTracks[0].id
-      );
     },
   },
 };

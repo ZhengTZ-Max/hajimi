@@ -31,7 +31,6 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import { getTrackDetail } from '@/api/track';
 import TrackList from '@/components/TrackList.vue';
 
 export default {
@@ -100,14 +99,7 @@ export default {
       // 获取已经加载了的歌曲
       let loadedTrackIDs = this.tracks.map(t => t.id);
 
-      if (trackIDs.length > 0) {
-        getTrackDetail(trackIDs.join(',')).then(data => {
-          let newTracks = data.songs.filter(
-            t => !loadedTrackIDs.includes(t.id)
-          );
-          this.tracks.push(...newTracks);
-        });
-      }
+   
     },
   },
 };

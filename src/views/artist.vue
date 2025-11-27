@@ -185,9 +185,7 @@ import {
   followAArtist,
   similarArtists,
 } from '@/api/artist';
-import { getTrackDetail } from '@/api/track';
 import locale from '@/locale';
-import { isAccountLoggedIn } from '@/utils/auth';
 import NProgress from 'nprogress';
 
 import ButtonTwoTone from '@/components/ButtonTwoTone.vue';
@@ -292,17 +290,10 @@ export default {
         this.mvs = data.mvs;
         this.hasMoreMV = data.hasMore;
       });
-      if (isAccountLoggedIn()) {
-        similarArtists(id).then(data => {
-          this.similarArtists = data.artists;
-        });
-      }
     },
     setPopularTracks(hotSongs) {
       const trackIDs = hotSongs.map(t => t.id);
-      getTrackDetail(trackIDs.join(',')).then(data => {
-        this.popularTracks = data.songs;
-      });
+
     },
     goToAlbum(id) {
       this.$router.push({

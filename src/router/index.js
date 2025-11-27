@@ -13,11 +13,6 @@ const routes = [
     },
   },
   {
-    path: '/playlist/:id',
-    name: 'playlist',
-    component: () => import('@/views/playlist.vue'),
-  },
-  {
     path: '/album/:id',
     name: 'album',
     component: () => import('@/views/album.vue'),
@@ -89,19 +84,6 @@ const routes = [
       keepAlive: true,
       savePosition: true,
     },
-  },
-  {
-    path: '/library/liked-songs',
-    name: 'likedSongs',
-    component: () => import('@/views/playlist.vue'),
-    meta: {
-      requireLogin: true,
-    },
-  },
-  {
-    path: '/settings',
-    name: 'settings',
-    component: () => import('@/views/settings.vue'),
   },
   {
     path: '/daily/songs',

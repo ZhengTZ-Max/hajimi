@@ -34,8 +34,6 @@
       />
     </transition>
     <Toast />
-    <ModalAddTrackToPlaylist v-if="isAccountLoggedIn" />
-    <ModalNewPlaylist v-if="isAccountLoggedIn" />
     <transition v-if="enablePlayer" name="slide-up">
       <Lyrics v-show="showLyrics" />
     </transition>
@@ -43,13 +41,10 @@
 </template>
 
 <script>
-import ModalAddTrackToPlaylist from './components/ModalAddTrackToPlaylist.vue';
-import ModalNewPlaylist from './components/ModalNewPlaylist.vue';
 import Scrollbar from './components/Scrollbar.vue';
 import Navbar from './components/Navbar.vue';
 import PlayerBar from './components/PlayerBar.vue';
 import Toast from './components/Toast.vue';
-import { isAccountLoggedIn, isLooseLoggedIn } from '@/utils/auth';
 import Lyrics from './views/lyrics.vue';
 import { mapState } from 'vuex';
 
@@ -59,8 +54,6 @@ export default {
     Navbar,
     PlayerBar,
     Toast,
-    ModalAddTrackToPlaylist,
-    ModalNewPlaylist,
     Lyrics,
     Scrollbar,
   },
@@ -72,14 +65,10 @@ export default {
   computed: {
     ...mapState([
       'showLyrics',
-      'settings',
       'player',
       'enableScrolling',
       'playerBar',
     ]),
-    isAccountLoggedIn() {
-      return isAccountLoggedIn();
-    },
     showPlayer() {
       return (
         [
@@ -112,16 +101,7 @@ export default {
       }
     },
     fetchData() {
-      if (!isLooseLoggedIn()) return;
-      this.$store.dispatch('fetchLikedSongs');
-      this.$store.dispatch('fetchLikedSongsWithDetails');
-      this.$store.dispatch('fetchLikedPlaylist');
-      if (isAccountLoggedIn()) {
-        this.$store.dispatch('fetchLikedAlbums');
-        this.$store.dispatch('fetchLikedArtists');
-        this.$store.dispatch('fetchLikedMVs');
-        this.$store.dispatch('fetchCloudDisk');
-      }
+ 
     },
     handleScroll() {
       this.$refs.scrollbar.handleScroll();

@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import { getTrackDetail } from '@/api/track';
 import { search } from '@/api/others';
 import locale from '@/locale';
 import { camelCase } from 'change-case';
@@ -129,9 +128,7 @@ export default {
     getTracksDetail() {
       const trackIDs = this.result.map(t => t.id);
       if (trackIDs.length === 0) return;
-      getTrackDetail(trackIDs.join(',')).then(result => {
-        this.result = result.songs;
-      });
+   
     },
   },
 };

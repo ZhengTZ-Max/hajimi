@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import { newAlbums } from '@/api/album';
 import NProgress from 'nprogress';
 
 import CoverRow from '@/components/CoverRow.vue';
@@ -30,13 +29,7 @@ export default {
     };
   },
   created() {
-    newAlbums({
-      area: 'EA',
-      limit: 100,
-    }).then(data => {
-      this.albums = data.albums;
-      NProgress.done();
-    });
+
   },
 };
 </script>
