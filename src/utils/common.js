@@ -227,10 +227,23 @@ export async function getFolderContents(folderPath) {
   // 确保 folderPath 以 '/' 结尾，避免匹配到其他前缀
   const prefix = folderPath.endsWith('/') ? folderPath : folderPath + '/';
 
-  const { blobs } = await list({
-    prefix, // 相当于“文件夹”
-    token: 'vercel_blob_rw_yRljidGuz14HGgfy_ZjbdnUurMiienVAC5nvl6Z5PyufzAC', // 如果在服务端且需要认证
-  });
+  // 从环境变量获取 token，Vue CLI 中环境变量需要以 VUE_APP_ 开头
+  const token = process.env.VUE_APP_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN;
 
-  return blobs;
+  if (!token) {
+    console.warn('Vercel Blob: No token found. Please configure VUE_APP_BLOB_READ_WRITE_TOKEN or BLOB_READ_WRITE_TOKEN environment variable.');
+    return [];
+  }
+
+  try {
+    const { blobs } = await list({
+      prefix, // 相当于"文件夹"
+      token, // 传递 token
+    });
+
+    return blobs;
+  } catch (error) {
+    console.error('Error fetching folder contents from Vercel Blob:', error);
+    return [];
+  }
 }

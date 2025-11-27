@@ -28,14 +28,6 @@ module.exports = {
           '^/bapi': '/x/web-interface',
         },
       },
-      '^/vapi': {
-        target: 'https://vercel.com/api/',
-        changeOrigin: true,
-        secure: false,
-        pathRewrite: {
-          '^/vapi': '/x/web-interface',
-        },
-      },
     },
   },
   // pwa: {
